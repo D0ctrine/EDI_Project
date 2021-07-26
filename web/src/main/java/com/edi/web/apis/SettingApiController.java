@@ -80,7 +80,7 @@ public class SettingApiController {
   }
 
   @PostMapping("/api/setting/create")
-  public ResponseEntity<ApiResult> CreateConfig(@RequestBody CreateAllSettingPayload payload,
+  public ResponseEntity<ApiResult> CreateSetting(@RequestBody CreateAllSettingPayload payload,
                                              @CurrentUser SimpleUser currentUser) {
     List<CreateEnvPayload> envSettingList = payload.getEnv();
     List<CreateQueryPayload> querySettingList = payload.getItemGrp();
@@ -132,7 +132,7 @@ public class SettingApiController {
   }
 
   @PostMapping("/api/setting/update")
-  public ResponseEntity<ApiResult> UpdateConfig(@RequestBody UpdateAllSettingPayload payload,
+  public ResponseEntity<ApiResult> UpdateSetting(@RequestBody UpdateAllSettingPayload payload,
                                              @CurrentUser SimpleUser currentUser) {
       List<UpdateEnvPayload> envSettingList = payload.getEnv();
       List<UpdateQueryPayload> querySettingList = payload.getItemGrp();
