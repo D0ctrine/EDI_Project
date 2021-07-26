@@ -177,7 +177,7 @@ public class SettingApiController {
       return Result.ok(apiResult);
   }
 
-  @PostMapping("/api/setting/filedefine/delete")
+  @PostMapping("/api/setting/filedefine/delete") //굳이 필요없을듯.....
   public ResponseEntity<ApiResult> DeletFileDefine(@RequestBody UpdateFileDefPayload  payload, @CurrentUser SimpleUser currentUser) {
       UpdateFileDefCommand fileDefCommand = payload.toCommand(currentUser.getUserId());
       fileDefService.delete(fileDefCommand);

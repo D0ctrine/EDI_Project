@@ -50,9 +50,18 @@ export default {
       })
     })
   },
-  save (detail) {
+  create (detail) {
     return new Promise((resolve, reject) => {
-      axios.post('/setting/save', detail).then(({ data }) => {
+      axios.post('/setting/create', detail).then(({ data }) => {
+        resolve(data)
+      }).catch((error) => {
+        reject(errorParser.parse(error))
+      })
+    })
+  },
+  udpate (detail) {
+    return new Promise((resolve, reject) => {
+      axios.post('/setting/update', detail).then(({ data }) => {
         resolve(data)
       }).catch((error) => {
         reject(errorParser.parse(error))

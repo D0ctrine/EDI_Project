@@ -25,7 +25,7 @@ public class headntail extends AbstractBaseEntity {
   @Column(name = "cfg_id")
   private String cfg_id;
 
-  // type : head n tail or h_sql n t_sql
+  // type : h_text n t_text or h_sql n t_sql
   @Column(name = "data_type")
   private String data_type;
 

@@ -189,11 +189,12 @@ export default {
     onClick (params) {
       console.log('--------------------active & params-------------------')
       console.log(this.active[0])
-      console.log(params)
+      console.log(params.parent.name)
       this.active = []
       if (params.file_type && params.file_type === 'file') {
         if (params.depth === '2') params.file_type = 'COG'
-        else if (params.depth === '3') params.file_type = 'TXT'
+        else if (params.depth === '3' && params.parent.name === 'OUT') params.file_type = 'TXT'
+        else if (params.depth === '3' && params.parent.name === 'IN') params.file_type = 'TXT2'
         if (params.file_type === 'COG' || params.file_type === 'TXT') this.active.push(params)
       }
     },

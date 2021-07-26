@@ -3,7 +3,7 @@
   <h5 class="pt-3 pb-0 mb-0 green"><v-icon size="35">mdi-file-cog</v-icon>    File Common Settings</h5>
   <v-divider class="mt-1 dark"></v-divider>
   <p style="">
-  <v-btn color="blue-grey" class="mr-16 white--text" v-on:click="saveData()" style="float: right">
+  <v-btn color="blue-grey" class="mr-16 white--text" v-on:click="saveData()" style="float: right;">
       Save<v-icon right dark> mdi-content-save-all</v-icon>
     </v-btn></p>
   <v-container style="height: 780px;overflow-y:auto;overflow-x: hidden;">
@@ -15,7 +15,7 @@
       </v-icon>
     </v-btn>
   </p>
-  <Grid ref="tuiGrid1" :data="envProps.data" :columns="envProps.columns" :options="envProps.options" width="600"/>
+  <grid ref="tuiGrid1" :data="envProps.data" :columns="envProps.columns" :options="envProps.options" width="600"/>
 
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
   <p class="text-left itemHeader"><v-icon size="25">mdi-email</v-icon> 메일
@@ -25,7 +25,7 @@
       </v-icon>
     </v-btn>
   </p>
-  <Grid ref="tuiGrid2" :data="mailProps.data" :columns="mailProps.columns" :options="mailProps.options" width="600"/>
+  <grid ref="tuiGrid2" :data="mailProps.data" :columns="mailProps.columns" :options="mailProps.options" width="600"/>
 
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
   <p class="text-left itemHeader"><v-icon size="25">mdi-file-star</v-icon> FTP
@@ -35,7 +35,7 @@
       </v-icon>
     </v-btn>
   </p>
-  <Grid ref="tuiGrid3" :data="ftpProps.data" :columns="ftpProps.columns" :options="ftpProps.options" width="600"/>
+  <grid ref="tuiGrid3" :data="ftpProps.data" :columns="ftpProps.columns" :options="ftpProps.options" width="600"/>
 
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
   <p class="text-left itemHeader"><v-icon size="25">mdi-database-arrow-right</v-icon> Value
@@ -45,7 +45,7 @@
       </v-icon>
     </v-btn>
   </p>
-  <Grid ref="tuiGrid4" :data="queryProps.data" :columns="queryProps.columns" :options="queryProps.options" width="600"/>
+  <grid ref="tuiGrid4" :data="queryProps.data" :columns="queryProps.columns" :options="queryProps.options" width="600"/>
 
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
   </v-container>
@@ -285,10 +285,16 @@ export default {
   components: {
     Grid
   },
+  data () {
+    return {
+      envProps: { columns: envCols, options: options },
+      mailProps: { columns: mailCols, options: options },
+      ftpProps: { columns: ftpCols, options: options },
+      queryProps: { columns: queryCols, options: options }
+    }
+  },
   created () {
     configService.config(this.selected.id).then((settingList) => {
-      console.log('selected~!!')
-      console.log(this.selected)
       if (settingList.emailList.length) {
         for (let i = 0; i < settingList.emailList.length; i++) {
           settingList.emailList[i].gridName = 'grid1'
@@ -309,26 +315,10 @@ export default {
           settingList.itemList[i].gridName = 'grid4'
         }
       }
-      this.envProps = {
-        data: settingList.envList,
-        columns: envCols,
-        options: options
-      }
-      this.mailProps = {
-        data: settingList.emailList,
-        columns: mailCols,
-        options: options
-      }
-      this.ftpProps = {
-        data: settingList.ftpList,
-        columns: ftpCols,
-        options: options
-      }
-      this.queryProps = {
-        data: settingList.itemList,
-        columns: queryCols,
-        options: options
-      }
+      this.$refs.tuiGrid1.invoke('resetData', settingList.envList)
+      this.$refs.tuiGrid2.invoke('resetData', settingList.emailList)
+      this.$refs.tuiGrid3.invoke('resetData', settingList.ftpList)
+      this.$refs.tuiGrid4.invoke('resetData', settingList.itemList)
     }).catch(error => {
       this.errorMessage = error.message
       console.log(this.errorMessage)
