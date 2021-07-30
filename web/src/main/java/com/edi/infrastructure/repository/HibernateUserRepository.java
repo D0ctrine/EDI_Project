@@ -3,6 +3,8 @@ package com.edi.infrastructure.repository;
 import com.edi.domain.model.user.User;
 import com.edi.domain.model.user.UserRepository;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -10,7 +12,8 @@ import javax.persistence.EntityManager;
 @Repository
 public class HibernateUserRepository extends HibernateSupport<User> implements UserRepository {
 
-  public HibernateUserRepository(EntityManager entityManager) {
+  @Autowired
+  public HibernateUserRepository(@Qualifier("masterEntityManager") EntityManager entityManager) {
     super(entityManager);
   }
 

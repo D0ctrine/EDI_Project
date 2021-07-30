@@ -9,12 +9,15 @@ import com.edi.domain.model.commonfile.email.EmailRepository;
 import com.edi.domain.model.commonfile.email.EmailSetting;
 
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class HibernateEmailRepository extends HibernateSupport<EmailSetting> implements EmailRepository {
 
-  public HibernateEmailRepository(EntityManager entityManager) {
+  @Autowired
+  public HibernateEmailRepository(@Qualifier("masterEntityManager") EntityManager entityManager) {
     super(entityManager);
   }
 

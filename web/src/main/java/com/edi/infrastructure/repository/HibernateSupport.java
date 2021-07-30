@@ -12,6 +12,7 @@ abstract class HibernateSupport<T> {
     this.entityManager = entityManager;
   }
 
+
   Session getSession() {
     return entityManager.unwrap(Session.class);
   }

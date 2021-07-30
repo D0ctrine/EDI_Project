@@ -21,7 +21,7 @@
             Test
         </v-btn>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <v-btn tile color="default" >
+        <v-btn tile color="default" v-on:click="saveData()" >
           <v-icon left size="30">
           mdi-content-save
         </v-icon>
@@ -75,10 +75,9 @@ export default {
         lineWrapping: true
       },
       items: [
-        'Mesmgr',
-        'Rptmgr',
-        'COMS',
-        'SR'
+        'Mes',
+        'Report',
+        'Coms'
       ]
     }
   },
@@ -105,6 +104,9 @@ export default {
     onCmCodeChange (newCode) {
       this.formData.queryText = newCode
       this.$emit('codeChange', this.formData.queryText)
+    },
+    saveData () {
+      alert('saved~!')
     }
   }
 

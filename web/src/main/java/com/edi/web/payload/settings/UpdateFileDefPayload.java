@@ -7,15 +7,11 @@ public class UpdateFileDefPayload {
   private Long id;
   private String cfgId;
   private String fileDesc;
-  private String scheduleMonth;
-  private String scheduleWeek;
-  private String scheduleDay;
-  private String scheduleHour;
-  private String scheduleMin;
+  private String cronData;
   private String extractType;
 
   public UpdateFileDefCommand toCommand(UserId userId){
-    return new UpdateFileDefCommand(id, userId, cfgId, fileDesc, scheduleMonth, scheduleWeek, scheduleDay, scheduleHour, scheduleMin, extractType);
+    return new UpdateFileDefCommand(id, userId, cfgId, fileDesc, cronData, extractType);
   }
 
   public Long getId() {
@@ -30,24 +26,8 @@ public class UpdateFileDefPayload {
     return fileDesc;
   }
 
-  public String getScheduleMonth() {
-    return scheduleMonth;
-  }
-
-  public String getScheduleWeek() {
-    return scheduleWeek;
-  }
-
-  public String getScheduleDay() {
-    return scheduleDay;
-  }
-
-  public String getScheduleHour() {
-    return scheduleHour;
-  }
-
-  public String getScheduleMin() {
-    return scheduleMin;
+  public String getCronData() {
+    return cronData;
   }
 
   public String getExtractType() {

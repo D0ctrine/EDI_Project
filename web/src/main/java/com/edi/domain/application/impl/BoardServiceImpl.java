@@ -8,6 +8,8 @@ import com.edi.domain.model.board.BoardManagement;
 import com.edi.domain.model.board.BoardRepository;
 import com.edi.domain.model.board.events.BoardCreatedEvent;
 import com.edi.domain.model.user.UserId;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,7 +18,6 @@ import java.util.List;
 @Service
 @Transactional
 public class BoardServiceImpl implements BoardService {
-
   private BoardRepository boardRepository;
   private BoardManagement boardManagement;
   private DomainEventPublisher domainEventPublisher;

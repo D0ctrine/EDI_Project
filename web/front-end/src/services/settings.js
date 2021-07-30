@@ -59,7 +59,7 @@ export default {
       })
     })
   },
-  udpate (detail) {
+  update (detail) {
     return new Promise((resolve, reject) => {
       axios.post('/setting/update', detail).then(({ data }) => {
         resolve(data)

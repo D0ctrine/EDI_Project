@@ -22,6 +22,8 @@ public interface QueryService {
    */
   List<QuerySetting> create(List<CreateQueryCommand> qc);
 
+  QuerySetting createMainQuery(CreateQueryCommand qc);
+
   /**
    * 카테고리 삭제
    * ID(PK)를 통해 카테고리를 삭제한다.

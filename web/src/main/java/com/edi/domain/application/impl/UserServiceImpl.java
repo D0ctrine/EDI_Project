@@ -5,6 +5,7 @@ import com.edi.domain.application.commands.RegistrationCommand;
 import com.edi.domain.common.event.DomainEventPublisher;
 import com.edi.domain.model.user.*;
 import com.edi.domain.model.user.events.UserRegisteredEvent;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

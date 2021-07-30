@@ -9,11 +9,14 @@ import com.edi.domain.model.commonfile.query.QueryRepository;
 import com.edi.domain.model.commonfile.query.QuerySetting;
 
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class HibernateQueryRepository extends HibernateSupport<QuerySetting> implements QueryRepository{
-  public HibernateQueryRepository(EntityManager entityManager) {
+  @Autowired
+  public HibernateQueryRepository(@Qualifier("masterEntityManager") EntityManager entityManager) {
     super(entityManager);
   }
 

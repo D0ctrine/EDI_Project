@@ -9,11 +9,14 @@ import com.edi.domain.model.commonfile.environment.EnvRepository;
 import com.edi.domain.model.commonfile.environment.EnvSetting;
 
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class HibernateEnvRepository extends HibernateSupport<EnvSetting> implements EnvRepository{
-  public HibernateEnvRepository(EntityManager entityManager) {
+  @Autowired
+  public HibernateEnvRepository(@Qualifier("masterEntityManager") EntityManager entityManager) {
     super(entityManager);
   }
 

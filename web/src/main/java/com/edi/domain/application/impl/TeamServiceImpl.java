@@ -7,6 +7,7 @@ import com.edi.domain.model.team.Team;
 import com.edi.domain.model.team.TeamRepository;
 import com.edi.domain.model.team.events.TeamCreatedEvent;
 import com.edi.domain.model.user.UserId;
+
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,7 +16,6 @@ import java.util.List;
 @Service
 @Transactional
 public class TeamServiceImpl implements TeamService {
-
   private TeamRepository teamRepository;
   private DomainEventPublisher domainEventPublisher;
 

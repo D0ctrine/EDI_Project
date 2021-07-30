@@ -8,7 +8,7 @@ import com.edi.web.payload.config.UpdateQueryPayload;
 public class UpdateAllSettingPayload {
   private List<UpdateEnvPayload> env;
   private List<UpdateQueryPayload> itemGrp;
-  private List<UpdateFileDefPayload> fileDef;
+  private UpdateFileDefPayload fileDef;
   private List<UpdateHnTPayload> headNtail;
   private String cg_id;
 
@@ -24,10 +24,10 @@ public class UpdateAllSettingPayload {
   public void setItemGrp(List<UpdateQueryPayload> itemGrp) {
     this.itemGrp = itemGrp;
   }
-  public List<UpdateFileDefPayload> getFileDef() {
+  public UpdateFileDefPayload getFileDef() {
     return fileDef;
   }
-  public void setFileDef(List<UpdateFileDefPayload> fileDef) {
+  public void setFileDef(UpdateFileDefPayload fileDef) {
     this.fileDef = fileDef;
   }
   public List<UpdateHnTPayload> getHeadNtail() {

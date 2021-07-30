@@ -1,12 +1,10 @@
 package com.edi.domain.model.settingfile.Setting;
 
-import java.util.List;
-
 public interface fileDefRepository {
   /**
    * 설정된 Value값들을 가져온다.
    */
-  List<file_define> getFileDefData(String configId);
+  file_define getFileDefData(String configId);
 
   /**
    * 해당하는 데이터를 가져온다.
@@ -16,7 +14,7 @@ public interface fileDefRepository {
   /**
    * 저장된 데이터를 수정한다.
    */
-  List<file_define> updateFileDefData(List<file_define> fdef);
+  file_define updateFileDefData(file_define fdef);
 
   /**
    * value 값 삭제

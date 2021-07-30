@@ -7,6 +7,7 @@ import com.edi.domain.application.EnvironmentService;
 import com.edi.domain.application.FileDefService;
 import com.edi.domain.application.HeadnTailService;
 import com.edi.domain.application.QueryService;
+import com.edi.domain.application.SQLService;
 import com.edi.domain.application.commands.config.environment.CreateEnvCommand;
 import com.edi.domain.application.commands.config.environment.UpdateEnvCommand;
 import com.edi.domain.application.commands.config.query.CreateQueryCommand;
@@ -21,6 +22,7 @@ import com.edi.domain.model.commonfile.query.QuerySetting;
 import com.edi.domain.model.settingfile.Setting.file_define;
 import com.edi.domain.model.settingfile.headntail.headntail;
 import com.edi.domain.model.user.SimpleUser;
+import com.edi.web.payload.SelectSQLPayload;
 import com.edi.web.payload.config.CreateEnvPayload;
 import com.edi.web.payload.config.CreateQueryPayload;
 import com.edi.web.payload.config.UpdateEnvPayload;
@@ -47,12 +49,14 @@ public class SettingApiController {
   private QueryService queryService;
   private FileDefService fileDefService;
   private HeadnTailService hntService;
+  private SQLService sqlService;
 
-  public SettingApiController(EnvironmentService envService,QueryService queryService,FileDefService fileDefService,HeadnTailService hntService) {
+  public SettingApiController(EnvironmentService envService,QueryService queryService,FileDefService fileDefService,HeadnTailService hntService,SQLService sqlService) {
     this.envService = envService;
     this.queryService = queryService;
     this.fileDefService = fileDefService;
     this.hntService = hntService;
+    this.sqlService = sqlService;
   }
 
   @GetMapping("/api/setting")
@@ -61,7 +65,7 @@ public class SettingApiController {
 
     List<EnvSetting> envList = new ArrayList<>();
     List<QuerySetting> itemList = new ArrayList<>();
-    List<file_define> fileDefList = new ArrayList<>();
+    file_define fileDefList = new file_define();
     List<headntail> HnTList = new ArrayList<>();
 
     if(categoryId!=null){
@@ -74,7 +78,7 @@ public class SettingApiController {
     ApiResult apiResult = ApiResult.blank();
     apiResult.add("envList", envList);
     apiResult.add("itemList", itemList);
-    apiResult.add("filedefList", fileDefList);
+    if(fileDefList!=null)apiResult.add("filedefList", fileDefList);
     apiResult.add("hntList", HnTList);
     return Result.ok(apiResult);
   }
@@ -84,15 +88,22 @@ public class SettingApiController {
                                              @CurrentUser SimpleUser currentUser) {
     List<CreateEnvPayload> envSettingList = payload.getEnv();
     List<CreateQueryPayload> querySettingList = payload.getItemGrp();
-    List<CreateFileDefPayload> fileDefSettingList = payload.getFileDef();
+    CreateFileDefPayload fileDefSettingList = payload.getFileDef();
     List<CreateHnTPayload> HnTSettingList = payload.getHeadNtail();
     String configId = payload.getCg_id();
 
     List<CreateEnvCommand> envCommandList = new ArrayList<>();
     List<CreateQueryCommand> queryCommandList = new ArrayList<>();
-    List<CreateFileDefCommand> fileDefCommandList = new ArrayList<>();
     List<CreateHnTCommand> HnTCommandList = new ArrayList<>();
 
+    ApiResult apiResult = ApiResult.blank();//Result
+
+    if(fileDefSettingList!=null){
+    fileDefSettingList.setCfgId(configId);
+    CreateFileDefCommand fileDefCommandList = fileDefSettingList.toCommand(currentUser.getUserId());
+    file_define fileDefList = fileDefService.create(fileDefCommandList);
+    apiResult.add("fileDefList", fileDefList);
+    }
 
     for(CreateEnvPayload envSetting : envSettingList){
       envSetting.setCfgId(configId);
@@ -100,6 +111,7 @@ public class SettingApiController {
       envCommandList.add(envCommand);
     }
     List<EnvSetting> envList = envService.create(envCommandList);
+    apiResult.add("envList", envList);
 
     for(CreateQueryPayload querySetting : querySettingList){
       querySetting.setSettingId(configId);
@@ -107,13 +119,7 @@ public class SettingApiController {
       queryCommandList.add(queryCommand);
     }
     List<QuerySetting> queryList = queryService.create(queryCommandList);
-
-    for(CreateFileDefPayload fileDefSetting : fileDefSettingList){
-      fileDefSetting.setCfgId(configId);
-      CreateFileDefCommand fileDefCommand = fileDefSetting.toCommand(currentUser.getUserId());
-      fileDefCommandList.add(fileDefCommand);
-    }
-    List<file_define> fileDefList = fileDefService.create(fileDefCommandList);
+    apiResult.add("queryList", queryList);
 
     for(CreateHnTPayload HnTSetting : HnTSettingList){
       HnTSetting.setCfgId(configId);
@@ -121,11 +127,6 @@ public class SettingApiController {
       HnTCommandList.add(HnTCommand);
     }
     List<headntail> hntList = hntService.create(HnTCommandList);
-
-    ApiResult apiResult = ApiResult.blank();
-    apiResult.add("envList", envList);
-    apiResult.add("queryList", queryList);
-    apiResult.add("fileDefList", fileDefList);
     apiResult.add("hntList", hntList);
 
     return Result.ok(apiResult);
@@ -136,14 +137,17 @@ public class SettingApiController {
                                              @CurrentUser SimpleUser currentUser) {
       List<UpdateEnvPayload> envSettingList = payload.getEnv();
       List<UpdateQueryPayload> querySettingList = payload.getItemGrp();
-      List<UpdateFileDefPayload> fileDefSettingList = payload.getFileDef();
+      UpdateFileDefPayload fileDefSettingList = payload.getFileDef();
       List<UpdateHnTPayload> hntSettingList = payload.getHeadNtail();
       String configId = payload.getCg_id();
 
       List<UpdateEnvCommand> envCommandList = new ArrayList<>();
       List<UpdateQueryCommand> queryCommandList = new ArrayList<>();
       List<UpdateHnTCommand> hntCommandList = new ArrayList<>();
-      List<UpdateFileDefCommand> fileDefCommandList = new ArrayList<>();
+
+      fileDefSettingList.setCfgId(configId);
+      UpdateFileDefCommand fileDefCommandList = fileDefSettingList.toCommand(currentUser.getUserId());
+      if(fileDefSettingList!=null)fileDefService.update(fileDefCommandList);
 
       for( int i=0; i<envSettingList.size(); i++){
         envSettingList.get(i).setCfgId(configId);
@@ -159,13 +163,6 @@ public class SettingApiController {
       }
       if(querySettingList.isEmpty()==false)queryService.update(queryCommandList);
 
-      for(int i=0;i<fileDefSettingList.size();i++){
-        fileDefSettingList.get(i).setCfgId(configId);
-        UpdateFileDefCommand fileDefCommand = fileDefSettingList.get(i).toCommand(currentUser.getUserId());
-        fileDefCommandList.add(fileDefCommand);
-      }
-      if(fileDefSettingList.isEmpty()==false)fileDefService.update(fileDefCommandList);
-
       for(int i=0;i<hntSettingList.size();i++){
         hntSettingList.get(i).setCfgId(configId);
         UpdateHnTCommand hnTCommand = hntSettingList.get(i).toCommand(currentUser.getUserId());
@@ -177,7 +174,7 @@ public class SettingApiController {
       return Result.ok(apiResult);
   }
 
-  @PostMapping("/api/setting/filedefine/delete") //굳이 필요없을듯.....
+  @PostMapping("/api/setting/filedefine/delete") //지금 필요없지만 후에 필요할수도
   public ResponseEntity<ApiResult> DeletFileDefine(@RequestBody UpdateFileDefPayload  payload, @CurrentUser SimpleUser currentUser) {
       UpdateFileDefCommand fileDefCommand = payload.toCommand(currentUser.getUserId());
       fileDefService.delete(fileDefCommand);
@@ -206,6 +203,27 @@ public class SettingApiController {
       UpdateQueryCommand queryCommand = payload.toCommand(currentUser.getUserId());
       queryService.delete(queryCommand);
       ApiResult apiResult = ApiResult.blank();
+      return Result.ok(apiResult);
+  }
+
+  @PostMapping("/api/setting/sql")
+  public ResponseEntity<ApiResult> selectSQL(@RequestBody SelectSQLPayload payload, @CurrentUser SimpleUser currentUser){
+    ApiResult apiResult = ApiResult.blank();
+    if(payload.getDatabase().equals("Report")){
+      apiResult.add("reportList", sqlService.getReportQuery(payload.getQuery()));
+    }else if(payload.getDatabase().equals("MES")){
+      apiResult.add("mesList", sqlService.getMESQuery(payload.getQuery()));
+    }else if(payload.getDatabase().equals("Coms")){
+      apiResult.add("comsList", sqlService.getComsQuery(payload.getQuery()));
+    }
+      return Result.ok(apiResult);
+  }
+
+  @PostMapping("/api/setting/bigQuery")
+  public ResponseEntity<ApiResult> saveMainQuery(@RequestBody CreateQueryPayload payload, @CurrentUser SimpleUser currentUser){
+    CreateQueryCommand queryCommand = payload.toCommand(currentUser.getUserId());
+    ApiResult apiResult = ApiResult.blank();
+    apiResult.add("SQL", queryService.createMainQuery(queryCommand));
       return Result.ok(apiResult);
   }
 }

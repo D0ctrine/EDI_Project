@@ -4,8 +4,9 @@ import com.edi.domain.application.CategoryService;
 import com.edi.domain.application.commands.category.CreateCategoryCommand;
 import com.edi.domain.application.commands.category.UpdateCategoryCommand;
 import com.edi.domain.model.category.Category;
-import com.edi.domain.model.category.CategoryRepository;
+import com.edi.infrastructure.repository.CategoryRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import javax.transaction.Transactional;
 @Service
 @Transactional
 public class CategoryServiceImpl implements CategoryService{
-
+  @Autowired
   private CategoryRepository categoryRepository;
 
   public CategoryServiceImpl(CategoryRepository categoryRepository) {
@@ -24,7 +25,7 @@ public class CategoryServiceImpl implements CategoryService{
 
   @Override
   public List<Category> getList() {
-    return categoryRepository.getList();
+    return categoryRepository.findByDeleteUserIsNull();
   }
 
   @Override
@@ -38,18 +39,19 @@ public class CategoryServiceImpl implements CategoryService{
   @Override
   public Category delete(UpdateCategoryCommand command) {
     Category category = Category.update(command.getUserId(),command.getId() , command.getNewName(), "delete");
-    System.out.println("-----------------DeleteCategoryCommand");
-    System.out.println(category.toString());
-    return categoryRepository.delete(category);
+    categoryRepository.delete(category);
+    return category;
   }
 
   @Override
   public Category update(UpdateCategoryCommand command) {
-    // TODO Auto-generated method stub
     System.out.println("-----------------UpdateCategoryCommand");
-    Category category = Category.update(command.getUserId(),command.getId() , command.getNewName(), "update");
-    System.out.println(category.toString());
-    return categoryRepository.update(category);
+    Category category = categoryRepository.getOne(command.getId());
+    Category updateCategory = Category.update(command.getUserId(),command.getId() , command.getNewName(), "update");
+    category.setUpdate_date(updateCategory.getUpdate_date());
+    category.setUpdate_user(updateCategory.getUpdate_user());
+    category.setName(updateCategory.getName());
+    return categoryRepository.save(category);
   }
 
 }

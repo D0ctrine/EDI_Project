@@ -6,15 +6,11 @@ import com.edi.domain.model.user.UserId;
 public class CreateFileDefPayload {
   private String cfgId;
   private String fileDesc;
-  private String scheduleMonth;
-  private String scheduleWeek;
-  private String scheduleDay;
-  private String scheduleHour;
-  private String scheduleMin;
+  private String cronData;
   private String extractType;
 
   public CreateFileDefCommand toCommand(UserId userId) {
-    return new CreateFileDefCommand(userId, cfgId, fileDesc, scheduleMonth, scheduleWeek, scheduleDay, scheduleHour, scheduleMin, extractType);
+    return new CreateFileDefCommand(userId, cfgId, fileDesc, cronData, extractType);
   }
 
   public void setCfgId(String cfgId) {
@@ -25,24 +21,8 @@ public class CreateFileDefPayload {
     this.fileDesc = fileDesc;
   }
 
-  public void setScheduleMonth(String scheduleMonth) {
-    this.scheduleMonth = scheduleMonth;
-  }
-
-  public void setScheduleWeek(String scheduleWeek) {
-    this.scheduleWeek = scheduleWeek;
-  }
-
-  public void setScheduleDay(String scheduleDay) {
-    this.scheduleDay = scheduleDay;
-  }
-
-  public void setScheduleHour(String scheduleHour) {
-    this.scheduleHour = scheduleHour;
-  }
-
-  public void setScheduleMin(String scheduleMin) {
-    this.scheduleMin = scheduleMin;
+  public void setCronData(String cronData) {
+    this.cronData = cronData;
   }
 
   public void setExtractType(String extractType) {

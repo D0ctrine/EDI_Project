@@ -6,14 +6,14 @@ public class CreateHnTCommand {
   private UserId userId;
   private String cfgId;
   private String dataType;
-  private String orderNumber;
+  private String note;
   private String value;
 
-  public CreateHnTCommand(UserId userId, String cfgId, String dataType, String orderNumber, String value){
+  public CreateHnTCommand(UserId userId, String cfgId, String dataType, String note, String value){
     this.userId = userId;
     this.cfgId = cfgId;
     this.dataType = dataType;
-    this.orderNumber = orderNumber;
+    this.note = note;
     this.value = value;
   }
 
@@ -29,8 +29,8 @@ public class CreateHnTCommand {
     return dataType;
   }
 
-  public String getOrderNumber() {
-    return orderNumber;
+  public String getNote() {
+    return note;
   }
 
   public String getValue() {

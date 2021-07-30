@@ -2,7 +2,6 @@ package com.edi.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.edi.web.apis.authenticate.AuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

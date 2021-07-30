@@ -56,4 +56,11 @@ public class QueryServiceImpl implements QueryService{
     return querySettingList;
   }
 
+  @Override
+  public QuerySetting createMainQuery(CreateQueryCommand qc) {
+    QuerySetting qSetting = QuerySetting.create(qc.getUserId(), qc.getSettingId(), qc.getKey(), qc.getType(), qc.getQuery());
+    queryRepository.save(qSetting);
+    return qSetting;
+  }
+
 }

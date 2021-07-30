@@ -16,10 +16,10 @@ import com.edi.domain.model.user.UserId;
 
 @Entity
 @Table(name = "file_define")
-public class file_define extends AbstractBaseEntity{
+public class file_define extends AbstractBaseEntity {
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "EDI_FDEF_SEQUENCE")
-  @SequenceGenerator(name="EDI_FDEF_SEQUENCE",sequenceName="edi_fdef_seq", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EDI_FDEF_SEQUENCE")
+  @SequenceGenerator(name = "EDI_FDEF_SEQUENCE", sequenceName = "edi_fdef_seq", allocationSize = 1)
   private Long id;
 
   @Column(name = "cfg_id")
@@ -28,20 +28,8 @@ public class file_define extends AbstractBaseEntity{
   @Column(name = "file_desc")
   private String file_desc;
 
-  @Column(name = "schedule_month")
-  private String schedule_month;
-
-  @Column(name = "schedule_week")
-  private String schedule_week;
-
-  @Column(name = "schedule_day")
-  private String schedule_day;
-
-  @Column(name = "schedule_hour")
-  private String schedule_hour;
-
-  @Column(name = "schedule_min")
-  private String schedule_min;
+  @Column(name = "cron_data")
+  private String cron_data;
 
   @Column(name = "extract_type")
   private String extract_type;
@@ -70,7 +58,8 @@ public class file_define extends AbstractBaseEntity{
   @Column(name = "create_date")
   private String create_date;
 
-  public static file_define create(UserId userid,String cfg_id, String file_desc, String schedule_month, String schedule_week, String schedule_day, String schedule_hour, String schedule_min, String extract_type){
+  public static file_define create(UserId userid, String cfg_id, String file_desc, String cron_data,
+      String extract_type) {
     Date date = new Date();
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     String sqldate = formatter.format(date);
@@ -80,17 +69,14 @@ public class file_define extends AbstractBaseEntity{
     fDefine.setUpdate_date(sqldate);
     fDefine.setUpdate_user(userid.value().toString());
     fDefine.setFile_desc(file_desc);
-    fDefine.setSchedule_month(schedule_month);
-    fDefine.setSchedule_week(schedule_week);
-    fDefine.setSchedule_day(schedule_day);
-    fDefine.setSchedule_hour(schedule_hour);
-    fDefine.setSchedule_min(schedule_min);
+    fDefine.setCron_data(cron_data);
     fDefine.setExtract_type(extract_type);
 
     return fDefine;
   }
 
-  public static file_define update(Long id,UserId userid,String cfg_id, String file_desc, String schedule_month, String schedule_week, String schedule_day, String schedule_hour, String schedule_min, String extract_type){
+  public static file_define update(Long id, UserId userid, String cfg_id, String file_desc, String cron_data,
+      String extract_type) {
     Date date = new Date();
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     String sqldate = formatter.format(date);
@@ -101,11 +87,7 @@ public class file_define extends AbstractBaseEntity{
     fDefine.setUpdate_date(sqldate);
     fDefine.setUpdate_user(userid.value().toString());
     fDefine.setFile_desc(file_desc);
-    fDefine.setSchedule_month(schedule_month);
-    fDefine.setSchedule_week(schedule_week);
-    fDefine.setSchedule_day(schedule_day);
-    fDefine.setSchedule_hour(schedule_hour);
-    fDefine.setSchedule_min(schedule_min);
+    fDefine.setCron_data(cron_data);
     fDefine.setExtract_type(extract_type);
 
     return fDefine;
@@ -114,29 +96,25 @@ public class file_define extends AbstractBaseEntity{
   @Override
   public String toString() {
     return "file_define [cm_f01=" + cm_f01 + ", cm_f02=" + cm_f02 + ", create_date=" + create_date + ", create_user="
-        + create_user + ", extract_type=" + extract_type + ", file_desc=" + file_desc + ", id=" + id + ", schedule_day="
-        + schedule_day + ", schedule_hour=" + schedule_hour + ", schedule_min=" + schedule_min + ", schedule_month="
-        + schedule_month + ", schedule_week=" + schedule_week + ", cfg_id=" + cfg_id + ", update_date="
-        + update_date + ", update_user=" + update_user + "]";
+        + create_user + ", extract_type=" + extract_type + ", file_desc=" + file_desc + ", id=" + id + ", cron_data="
+        + cron_data + ", cfg_id=" + cfg_id + ", update_date=" + update_date + ", update_user=" + update_user + "]";
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + ((cfg_id == null) ? 0 : cfg_id.hashCode());
     result = prime * result + ((cm_f01 == null) ? 0 : cm_f01.hashCode());
     result = prime * result + ((cm_f02 == null) ? 0 : cm_f02.hashCode());
     result = prime * result + ((create_date == null) ? 0 : create_date.hashCode());
     result = prime * result + ((create_user == null) ? 0 : create_user.hashCode());
+    result = prime * result + ((cron_data == null) ? 0 : cron_data.hashCode());
+    result = prime * result + ((delete_date == null) ? 0 : delete_date.hashCode());
+    result = prime * result + ((delete_user == null) ? 0 : delete_user.hashCode());
     result = prime * result + ((extract_type == null) ? 0 : extract_type.hashCode());
     result = prime * result + ((file_desc == null) ? 0 : file_desc.hashCode());
     result = prime * result + ((id == null) ? 0 : id.hashCode());
-    result = prime * result + ((schedule_day == null) ? 0 : schedule_day.hashCode());
-    result = prime * result + ((schedule_hour == null) ? 0 : schedule_hour.hashCode());
-    result = prime * result + ((schedule_min == null) ? 0 : schedule_min.hashCode());
-    result = prime * result + ((schedule_month == null) ? 0 : schedule_month.hashCode());
-    result = prime * result + ((schedule_week == null) ? 0 : schedule_week.hashCode());
-    result = prime * result + ((cfg_id == null) ? 0 : cfg_id.hashCode());
     result = prime * result + ((update_date == null) ? 0 : update_date.hashCode());
     result = prime * result + ((update_user == null) ? 0 : update_user.hashCode());
     return result;
@@ -151,6 +129,11 @@ public class file_define extends AbstractBaseEntity{
     if (getClass() != obj.getClass())
       return false;
     file_define other = (file_define) obj;
+    if (cfg_id == null) {
+      if (other.cfg_id != null)
+        return false;
+    } else if (!cfg_id.equals(other.cfg_id))
+      return false;
     if (cm_f01 == null) {
       if (other.cm_f01 != null)
         return false;
@@ -171,6 +154,21 @@ public class file_define extends AbstractBaseEntity{
         return false;
     } else if (!create_user.equals(other.create_user))
       return false;
+    if (cron_data == null) {
+      if (other.cron_data != null)
+        return false;
+    } else if (!cron_data.equals(other.cron_data))
+      return false;
+    if (delete_date == null) {
+      if (other.delete_date != null)
+        return false;
+    } else if (!delete_date.equals(other.delete_date))
+      return false;
+    if (delete_user == null) {
+      if (other.delete_user != null)
+        return false;
+    } else if (!delete_user.equals(other.delete_user))
+      return false;
     if (extract_type == null) {
       if (other.extract_type != null)
         return false;
@@ -185,36 +183,6 @@ public class file_define extends AbstractBaseEntity{
       if (other.id != null)
         return false;
     } else if (!id.equals(other.id))
-      return false;
-    if (schedule_day == null) {
-      if (other.schedule_day != null)
-        return false;
-    } else if (!schedule_day.equals(other.schedule_day))
-      return false;
-    if (schedule_hour == null) {
-      if (other.schedule_hour != null)
-        return false;
-    } else if (!schedule_hour.equals(other.schedule_hour))
-      return false;
-    if (schedule_min == null) {
-      if (other.schedule_min != null)
-        return false;
-    } else if (!schedule_min.equals(other.schedule_min))
-      return false;
-    if (schedule_month == null) {
-      if (other.schedule_month != null)
-        return false;
-    } else if (!schedule_month.equals(other.schedule_month))
-      return false;
-    if (schedule_week == null) {
-      if (other.schedule_week != null)
-        return false;
-    } else if (!schedule_week.equals(other.schedule_week))
-      return false;
-    if (cfg_id == null) {
-      if (other.cfg_id != null)
-        return false;
-    } else if (!cfg_id.equals(other.cfg_id))
       return false;
     if (update_date == null) {
       if (other.update_date != null)
@@ -237,7 +205,6 @@ public class file_define extends AbstractBaseEntity{
     this.id = id;
   }
 
-
   public String getCfg_id() {
     return cfg_id;
   }
@@ -254,44 +221,12 @@ public class file_define extends AbstractBaseEntity{
     this.file_desc = file_desc;
   }
 
-  public String getSchedule_month() {
-    return schedule_month;
+  public String getCron_data() {
+    return cron_data;
   }
 
-  public void setSchedule_month(String schedule_month) {
-    this.schedule_month = schedule_month;
-  }
-
-  public String getSchedule_week() {
-    return schedule_week;
-  }
-
-  public void setSchedule_week(String schedule_week) {
-    this.schedule_week = schedule_week;
-  }
-
-  public String getSchedule_day() {
-    return schedule_day;
-  }
-
-  public void setSchedule_day(String schedule_day) {
-    this.schedule_day = schedule_day;
-  }
-
-  public String getSchedule_hour() {
-    return schedule_hour;
-  }
-
-  public void setSchedule_hour(String schedule_hour) {
-    this.schedule_hour = schedule_hour;
-  }
-
-  public String getSchedule_min() {
-    return schedule_min;
-  }
-
-  public void setSchedule_min(String schedule_min) {
-    this.schedule_min = schedule_min;
+  public void setCron_data(String cron_data) {
+    this.cron_data = cron_data;
   }
 
   public String getExtract_type() {

@@ -6,12 +6,12 @@ import com.edi.domain.model.user.UserId;
 public class UpdateHnTPayload {
   private Long id;
   private String cfgId;
-  private String dataType;
-  private String orderNumber;
+  private String data_type;
+  private String note;
   private String value;
 
   public UpdateHnTCommand toCommand(UserId userId){
-    return new UpdateHnTCommand(id, userId, cfgId, dataType, orderNumber, value);
+    return new UpdateHnTCommand(id, userId, cfgId, data_type, note, value);
   }
 
   public Long getId() {
@@ -22,12 +22,12 @@ public class UpdateHnTPayload {
     return cfgId;
   }
 
-  public String getDataType() {
-    return dataType;
+  public String getData_type() {
+    return data_type;
   }
 
-  public String getOrderNumber() {
-    return orderNumber;
+  public String getNote() {
+    return note;
   }
 
   public String getValue() {

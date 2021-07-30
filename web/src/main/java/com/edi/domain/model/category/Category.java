@@ -29,7 +29,7 @@ public class Category {
   private String file_type;
 
   @Column(name = "delete_user")
-  private String delete_user;
+  private String deleteUser;
 
   @Column(name = "delete_date")
   private String delete_date;
@@ -70,13 +70,11 @@ public class Category {
     Category cg = new Category();
     cg.name = name;
     cg.id = id;
-    cg.create_user = userid.value().toString();
-    cg.create_date = sqldate;
     if(type.equals("update")){
       cg.update_user = userid.value().toString();
       cg.update_date = sqldate;
     }else if(type.equals("delete")){
-      cg.delete_user = userid.value().toString();
+      cg.deleteUser = userid.value().toString();
       cg.delete_date = sqldate;
     }
 
@@ -124,11 +122,11 @@ public class Category {
   }
 
   public String getDelete_user() {
-    return delete_user;
+    return deleteUser;
   }
 
   public void setDelete_user(String delete_user) {
-    this.delete_user = delete_user;
+    this.deleteUser = delete_user;
   }
 
   public String getDelete_date() {
@@ -179,7 +177,7 @@ public class Category {
     result = prime * result + ((create_user == null) ? 0 : create_user.hashCode());
     result = prime * result + ((create_date == null) ? 0 : create_date.hashCode());
     result = prime * result + ((delete_date == null) ? 0 : delete_date.hashCode());
-    result = prime * result + ((delete_user == null) ? 0 : delete_user.hashCode());
+    result = prime * result + ((deleteUser == null) ? 0 : deleteUser.hashCode());
     result = prime * result + ((depth == null) ? 0 : depth.hashCode());
     result = prime * result + ((file_type == null) ? 0 : file_type.hashCode());
     result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -214,10 +212,10 @@ public class Category {
         return false;
     } else if (!delete_date.equals(other.delete_date))
       return false;
-    if (delete_user == null) {
-      if (other.delete_user != null)
+    if (deleteUser == null) {
+      if (other.deleteUser != null)
         return false;
-    } else if (!delete_user.equals(other.delete_user))
+    } else if (!deleteUser.equals(other.deleteUser))
       return false;
     if (depth == null) {
       if (other.depth != null)
@@ -260,7 +258,7 @@ public class Category {
   @Override
   public String toString() {
     return "Category [create_user=" + create_user + ", created_date=" + create_date + ", delete_date=" + delete_date
-        + ", delete_user=" + delete_user + ", depth=" + depth + ", file_type=" + file_type + ", id=" + id + ", name="
+        + ", delete_user=" + deleteUser + ", depth=" + depth + ", file_type=" + file_type + ", id=" + id + ", name="
         + name + ", parent=" + parent + ", update_date=" + update_date + ", update_user=" + update_user + "]";
   }
 

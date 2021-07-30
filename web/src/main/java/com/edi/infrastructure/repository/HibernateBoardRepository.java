@@ -4,15 +4,19 @@ import com.edi.domain.model.board.Board;
 import com.edi.domain.model.board.BoardRepository;
 import com.edi.domain.model.user.UserId;
 import org.hibernate.query.NativeQuery;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+
 import java.util.List;
 
 @Repository
 public class HibernateBoardRepository extends HibernateSupport<Board> implements BoardRepository {
 
-  HibernateBoardRepository(EntityManager entityManager) {
+  @Autowired
+  HibernateBoardRepository(@Qualifier("masterEntityManager") EntityManager entityManager) {
     super(entityManager);
   }
 

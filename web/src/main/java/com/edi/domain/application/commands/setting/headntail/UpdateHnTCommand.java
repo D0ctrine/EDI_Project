@@ -7,15 +7,15 @@ public class UpdateHnTCommand {
   private UserId userId;
   private String cfgId;
   private String dataType;
-  private String orderNumber;
+  private String note;
   private String value;
 
-  public UpdateHnTCommand(Long id, UserId userId, String cfgId, String dataType, String orderNumber, String value){
+  public UpdateHnTCommand(Long id, UserId userId, String cfgId, String dataType, String note, String value){
     this.id = id;
     this.userId = userId;
     this.cfgId = cfgId;
     this.dataType = dataType;
-    this.orderNumber = orderNumber;
+    this.note = note;
     this.value = value;
   }
 
@@ -35,8 +35,8 @@ public class UpdateHnTCommand {
     return dataType;
   }
 
-  public String getOrderNumber() {
-    return orderNumber;
+  public String getNote() {
+    return note;
   }
 
   public String getValue() {

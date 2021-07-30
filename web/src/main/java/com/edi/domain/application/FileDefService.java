@@ -10,11 +10,11 @@ public interface FileDefService {
     /**
    * 파일 설명, 주기, 추출 방식 리스트 가져오기
    */
-  List<file_define> getList(String cfgId);
+  file_define getList(String cfgId);
   /**
    * 파일 세팅 신규 생성
    */
-  List<file_define> create(List<CreateFileDefCommand> ec);
+  file_define create(CreateFileDefCommand ec);
   /**
    * 파일 세팅 삭제
    * ID(PK)를 통해 카테고리를 삭제한다.
@@ -24,5 +24,5 @@ public interface FileDefService {
   /**
    * 파일 세팅 갱신
    */
-  List<file_define> update(List<UpdateFileDefCommand> ec);
+  file_define update(UpdateFileDefCommand ec);
 }

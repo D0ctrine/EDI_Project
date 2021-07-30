@@ -26,7 +26,7 @@ public class HeadnTailServiceImpl implements HeadnTailService{
   public List<headntail> create(List<CreateHnTCommand> ec) {
     List<headntail> hntList = new ArrayList<headntail>();
     for(int i=0;i<ec.size();i++){
-      headntail hDef = headntail.create(ec.get(i).getUserId(), ec.get(i).getCfgId(), ec.get(i).getDataType(), ec.get(i).getOrderNumber(), ec.get(i).getValue());
+      headntail hDef = headntail.create(ec.get(i).getUserId(), ec.get(i).getCfgId(), ec.get(i).getDataType(), ec.get(i).getNote(), ec.get(i).getValue());
       hRepository.save(hDef);
       hntList.add(hDef);
     }
@@ -35,7 +35,7 @@ public class HeadnTailServiceImpl implements HeadnTailService{
 
   @Override
   public headntail delete(UpdateHnTCommand htc) {
-    headntail hnt = headntail.update(htc.getId(), htc.getUserId(), htc.getCfgId(), htc.getDataType(), htc.getOrderNumber(),htc.getValue());
+    headntail hnt = headntail.update(htc.getId(), htc.getUserId(), htc.getCfgId(), htc.getDataType(), htc.getNote(),htc.getValue());
     hRepository.deleteHnTData(hnt);
     return hnt;
   }
@@ -50,7 +50,7 @@ public class HeadnTailServiceImpl implements HeadnTailService{
   public List<headntail> update(List<UpdateHnTCommand> htc) {
     List<headntail> hList = new ArrayList<headntail>();
     for(int i=0;i<htc.size();i++){
-      headntail hnt = headntail.update(htc.get(i).getId(), htc.get(i).getUserId(), htc.get(i).getCfgId(), htc.get(i).getDataType(), htc.get(i).getOrderNumber(), htc.get(i).getValue());
+      headntail hnt = headntail.update(htc.get(i).getId(), htc.get(i).getUserId(), htc.get(i).getCfgId(), htc.get(i).getDataType(), htc.get(i).getNote(), htc.get(i).getValue());
       hRepository.save(hnt);
       hList.add(hnt);
     }

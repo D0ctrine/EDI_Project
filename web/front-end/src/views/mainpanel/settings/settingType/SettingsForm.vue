@@ -11,7 +11,7 @@
       clear-icon="mdi-close-circle"
       label="파일 설명(참조용)"
       rows="2"
-      style="font-size: 12px;"
+      style="font-size: 18px;"
       placeholder="파일 내용을 간략히 작성하시오."
       v-model="fileDescription"
       class="pt-0"
@@ -23,7 +23,8 @@
     <v-row>
       <span class="text-left">
         <p class="itemHeader"><v-icon size="30">mdi-star-four-points</v-icon> 주기(Crontab)</p>
-      <Grid ref="cronGrid" :data="gridCronProps.data" :columns="gridCronProps.columns" :options="gridCronProps.options" width="500"/>
+      <VueCronEditorBuefy v-model="cronExpression"/>
+    {{cronExpression}}
       </span>
     </v-row>
     <v-spacer style="height: 70px;"></v-spacer>
@@ -106,6 +107,7 @@
 import 'tui-grid/dist/tui-grid.css'
 import { Grid } from '@toast-ui/vue-grid'
 import settingService from '@/services/settings'
+import VueCronEditorBuefy from 'vue-cron-editor-buefy'
 
 class CustomDownBtnRenderer {
   constructor (props) {
@@ -115,16 +117,13 @@ class CustomDownBtnRenderer {
     el.style.backgroundColor = 'white'
     el.addEventListener('click', function () {
       const { grid, rowKey, columnInfo } = props
-      console.log('grid')
-      console.log(grid)
       console.log('columnInfo')
       console.log(columnInfo)
       var deleteRow = grid.getRow(rowKey)
       console.log('deleteRow')
       console.log(deleteRow)
       if (deleteRow.gridName === 'envGrid')settingService.deleteEnv(deleteRow)
-      else if (deleteRow.gridName === 'headGrid')settingService.deleteHeadNTail(deleteRow)
-      else if (deleteRow.gridName === 'tailGrid')settingService.deleteHeadNTail(deleteRow)
+      else if (deleteRow.gridName === 'headGrid' || deleteRow.gridName === 'tailGrid')settingService.deleteHeadNTail(deleteRow)
       else if (deleteRow.gridName === 'itemGrid')settingService.deleteQuery(deleteRow)
       grid.removeRow(rowKey)
     })
@@ -151,7 +150,7 @@ const options1 = {
     height: 30
   }
 }
-const headercols = [ // Cron
+const headercols = [ // Env
   {
     header: 'Item',
     name: 'item',
@@ -179,26 +178,15 @@ const headercols = [ // Cron
   }
 ]
 
-const headercols1 = [ // Env
-  {
-    header: 'DateType',
-    name: 'datetype',
-    width: '80',
-    align: 'center',
-    editor: 'text'
-  },
-  {
-    header: 'Value',
-    name: 'value',
-    align: 'center',
-    editor: 'text'
-  }
-]
-
 const headercols2 = [ // Head
   {
+    header: 'SEQ',
+    name: 'id',
+    hidden: true
+  },
+  {
     header: 'Type',
-    name: 'dataType',
+    name: 'data_type',
     align: 'center',
     formatter: 'listItemText',
     editor: {
@@ -234,8 +222,13 @@ const headercols2 = [ // Head
 
 const headercols3 = [ // Tail
   {
+    header: 'SEQ',
+    name: 'id',
+    hidden: true
+  },
+  {
     header: 'Type',
-    name: 'dataType',
+    name: 'data_type',
     align: 'center',
     formatter: 'listItemText',
     editor: {
@@ -256,7 +249,7 @@ const headercols3 = [ // Tail
   },
   {
     header: 'Note',
-    name: 'cm_f02',
+    name: 'note',
     align: 'center',
     editor: 'text'
   },
@@ -301,37 +294,16 @@ export default {
   name: 'myGrid',
   props: ['selected'],
   components: {
-    Grid
+    Grid, VueCronEditorBuefy
   },
   created () {
     this.getFileData()
   },
   data: () => ({
+    cronExpression: '',
     fileDescription: 'No Explanations',
+    fileDescriptionID: 0,
     extractFileType: 'text',
-    gridCronProps: {
-      columns: headercols1,
-      options: options1,
-      data: [{
-        datetype: 'Month',
-        value: ''
-      },
-      {
-        datetype: 'Week',
-        value: ''
-      },
-      {
-        datetype: 'Day',
-        value: ''
-      },
-      {
-        datetype: 'Hour',
-        value: ''
-      },
-      {
-        datetype: 'Min',
-        value: ''
-      }] },
     gridEnvProps: { columns: headercols, options: options1 },
     gridHeadProps: { columns: headercols2, options: options1 },
     gridTailProps: { columns: headercols3, options: options1 },
@@ -340,60 +312,54 @@ export default {
   methods: {
     getFileData () {
       console.log(this.selected)
-      settingService.setting(this.selected.id).then(response => {
-        if (response.filedefList.lenth) {
-          this.fileDescription = response.filedefList[0].file_desc
-          this.gridCronProps.data = [
-            {
-              datetype: 'Month',
-              value: response.filedefList[0].schedule_month
-            },
-            {
-              datetype: 'Week',
-              value: response.filedefList[0].schedule_week
-            },
-            {
-              datetype: 'Day',
-              value: response.filedefList[0].schedule_day
-            },
-            {
-              datetype: 'Hour',
-              value: response.filedefList[0].schedule_hour
-            },
-            {
-              datetype: 'Min',
-              value: response.filedefList[0].schedule_min
-            }
-          ]
-          this.extractFileType = response.filedefList[0].extract_type
-        } else {
-          let fileDef = this.gridCronProps.data
-          fileDef[0].fileDesc = this.fileDescription
-          fileDef[0].extractType = this.extractFileType
-        }
+      settingService.setting(this.selected.id)
+        .then(async response => {
+          if (response.filedefList) {
+            this.fileDescriptionID = await response.filedefList.id
+            this.fileDescription = await response.filedefList.file_desc
+            this.cronExpression = await response.filedefList.cron_data
+            this.extractFileType = await response.filedefList.extract_type
+          } else {
+            let fileDef = await { data: this.cronExpression, fileDesc: this.fileDescription, extractType: this.extractFileType }
+            const fileSetting = await { env: [], fileDef: fileDef, headNtail: [], itemGrp: [], cg_id: this.selected.id }
+            await settingService.create(fileSetting)
+          }
 
-        this.gridHeadProps.data = response.hntList.forEach(element => {
           let headerResult = []
-          if (element.data_type.startsWith('h')) headerResult.push(element)
-          return headerResult
-        })
+          this.gridHeadProps.data = await response.hntList.forEach(element => {
+            if (element.data_type.startsWith('h')) {
+              element.gridName = 'headGrid'
+              headerResult.push(element)
+            }
+          })
+          this.gridHeadProps.data = headerResult
 
-        this.gridTailProps.data = response.hntList.forEach(element => {
           let tailResult = []
-          if (element.data_type.startsWith('t')) tailResult.push(element)
-          return tailResult
-        })
+          await response.hntList.forEach(element => {
+            if (element.data_type.startsWith('t')) {
+              element.gridName = 'tailGrid'
+              tailResult.push(element)
+            }
+          })
+          this.gridTailProps.data = tailResult
 
-        this.$refs.cronGrid.invoke('resetData', this.gridCronProps.data)
-        this.$refs.envGrid.invoke('resetData', response.envList)
-        this.$refs.headGrid.invoke('resetData', this.gridHeadProps.data)
-        this.$refs.tailGrid.invoke('resetData', this.gridTailProps.data)
-        this.$refs.itemGrid.invoke('resetData', response.itemList)
-      })
+          await response.envList.forEach((element) => { element.gridName = 'envGrid' })
+          await response.itemList.forEach((element) => { element.gridName = 'itemGrid' })
+
+          console.log('gridProps Head N Tail')
+          console.log(this.gridHeadProps.data)
+          console.log(this.gridTailProps.data)
+          await this.$refs.envGrid.invoke('resetData', response.envList)
+          await this.$refs.itemGrid.invoke('resetData', response.itemList)
+          await this.$refs.tailGrid.invoke('resetData', this.gridTailProps.data)
+          await this.$refs.headGrid.invoke('resetData', this.gridHeadProps.data)
+        })
     },
     insertRow: function (event) {
       var rowData = { item: 'New Item', value: 'New Value', note: 'New Note' }
       let grid = ''
+      console.log('event')
+      console.log(event)
       if (event === 'envGrid') {
         rowData.gridName = 'envGrid'
         grid = this.$refs.envGrid
@@ -411,6 +377,7 @@ export default {
       }
 
       const cnt = grid.invoke('getRowCount')
+      console.log(rowData)
       grid.invoke('appendRow', rowData, { at: cnt, focus: true })
     },
     saveData: async function () {
@@ -419,23 +386,19 @@ export default {
         let head = await this.$refs.headGrid.invoke('getModifiedRows').createdRows
         let tail = await this.$refs.tailGrid.invoke('getModifiedRows').createdRows
         let headNtail = await [ ...head, ...tail ]
-
         let itemGrp = await this.$refs.itemGrid.invoke('getModifiedRows').createdRows
-
+        console.log('headNtail')
+        console.log(headNtail)
         const fileSetting = await {
           env: env,
           headNtail: headNtail,
-          item: itemGrp,
-          cg_id: this.selected.id
+          itemGrp: itemGrp,
+          cg_id: this.selected.id + ''
         }
-        console.log('fileSetting List')
-        console.log(fileSetting)
 
         await settingService.create(fileSetting)
 
-        let fileDef = await this.gridCronProps.data
-        fileDef[0].fileDesc = this.fileDescription
-        fileDef[0].extractType = this.extractFileType
+        let fileDef = await { id: this.fileDescriptionID, cronData: this.cronExpression, fileDesc: this.fileDescription, extractType: this.extractFileType }
         env = await this.$refs.envGrid.invoke('getModifiedRows').updatedRows
         head = await this.$refs.headGrid.invoke('getModifiedRows').updatedRows
         tail = await this.$refs.tailGrid.invoke('getModifiedRows').updatedRows
@@ -446,11 +409,9 @@ export default {
           env: env,
           headNtail: headNtail,
           fileDef: fileDef,
-          item: itemGrp,
+          itemGrp: itemGrp,
           cg_id: this.selected.id
         }
-        console.log('updateSetting List')
-        console.log(updateSetting)
         await settingService.update(updateSetting)
 
         await this.getFileData()

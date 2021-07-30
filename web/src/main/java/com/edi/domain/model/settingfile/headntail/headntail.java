@@ -29,8 +29,8 @@ public class headntail extends AbstractBaseEntity {
   @Column(name = "data_type")
   private String data_type;
 
-  @Column(name = "order_number")
-  private String order_number;
+  @Column(name = "note")
+  private String note;
 
   @Column(name = "value")
   private String value;
@@ -59,7 +59,7 @@ public class headntail extends AbstractBaseEntity {
   @Column(name = "create_date")
   private String create_date;
 
-  public static headntail create(UserId userid, String cfg_id, String data_type, String order_number, String value) {
+  public static headntail create(UserId userid, String cfg_id, String data_type, String note, String value) {
     Date date = new Date();
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     String sqldate = formatter.format(date);
@@ -69,14 +69,13 @@ public class headntail extends AbstractBaseEntity {
     hnt.setCreate_date(sqldate);
     hnt.setCreate_user(userid.value().toString());
     hnt.setData_type(data_type);
-    hnt.setOrder_number(order_number);
+    hnt.setNote(note);
     hnt.setValue(value);
 
     return hnt;
   }
 
-  public static headntail update(Long id, UserId userid, String cfg_id, String data_type, String order_number,
-      String value) {
+  public static headntail update(Long id, UserId userid, String cfg_id, String data_type, String note, String value) {
     Date date = new Date();
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     String sqldate = formatter.format(date);
@@ -87,31 +86,26 @@ public class headntail extends AbstractBaseEntity {
     hnt.setCreate_date(sqldate);
     hnt.setCreate_user(userid.value().toString());
     hnt.setData_type(data_type);
-    hnt.setOrder_number(order_number);
+    hnt.setNote(note);
     hnt.setValue(value);
 
     return hnt;
   }
 
   @Override
-  public String toString() {
-    return "headntail [cm_f01=" + cm_f01 + ", cm_f02=" + cm_f02 + ", create_date=" + create_date + ", create_user="
-        + create_user + ", data_type=" + data_type + ", id=" + id + ", order_number=" + order_number + ", cfg_id="
-        + cfg_id + ", update_date=" + update_date + ", update_user=" + update_user + ", value=" + value + "]";
-  }
-
-  @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + ((cfg_id == null) ? 0 : cfg_id.hashCode());
     result = prime * result + ((cm_f01 == null) ? 0 : cm_f01.hashCode());
     result = prime * result + ((cm_f02 == null) ? 0 : cm_f02.hashCode());
     result = prime * result + ((create_date == null) ? 0 : create_date.hashCode());
     result = prime * result + ((create_user == null) ? 0 : create_user.hashCode());
     result = prime * result + ((data_type == null) ? 0 : data_type.hashCode());
+    result = prime * result + ((delete_date == null) ? 0 : delete_date.hashCode());
+    result = prime * result + ((delete_user == null) ? 0 : delete_user.hashCode());
     result = prime * result + ((id == null) ? 0 : id.hashCode());
-    result = prime * result + ((order_number == null) ? 0 : order_number.hashCode());
-    result = prime * result + ((cfg_id == null) ? 0 : cfg_id.hashCode());
+    result = prime * result + ((note == null) ? 0 : note.hashCode());
     result = prime * result + ((update_date == null) ? 0 : update_date.hashCode());
     result = prime * result + ((update_user == null) ? 0 : update_user.hashCode());
     result = prime * result + ((value == null) ? 0 : value.hashCode());
@@ -127,6 +121,11 @@ public class headntail extends AbstractBaseEntity {
     if (getClass() != obj.getClass())
       return false;
     headntail other = (headntail) obj;
+    if (cfg_id == null) {
+      if (other.cfg_id != null)
+        return false;
+    } else if (!cfg_id.equals(other.cfg_id))
+      return false;
     if (cm_f01 == null) {
       if (other.cm_f01 != null)
         return false;
@@ -152,20 +151,25 @@ public class headntail extends AbstractBaseEntity {
         return false;
     } else if (!data_type.equals(other.data_type))
       return false;
+    if (delete_date == null) {
+      if (other.delete_date != null)
+        return false;
+    } else if (!delete_date.equals(other.delete_date))
+      return false;
+    if (delete_user == null) {
+      if (other.delete_user != null)
+        return false;
+    } else if (!delete_user.equals(other.delete_user))
+      return false;
     if (id == null) {
       if (other.id != null)
         return false;
     } else if (!id.equals(other.id))
       return false;
-    if (order_number == null) {
-      if (other.order_number != null)
+    if (note == null) {
+      if (other.note != null)
         return false;
-    } else if (!order_number.equals(other.order_number))
-      return false;
-    if (cfg_id == null) {
-      if (other.cfg_id != null)
-        return false;
-    } else if (!cfg_id.equals(other.cfg_id))
+    } else if (!note.equals(other.note))
       return false;
     if (update_date == null) {
       if (other.update_date != null)
@@ -183,6 +187,14 @@ public class headntail extends AbstractBaseEntity {
     } else if (!value.equals(other.value))
       return false;
     return true;
+  }
+
+  @Override
+  public String toString() {
+    return "headntail [cfg_id=" + cfg_id + ", cm_f01=" + cm_f01 + ", cm_f02=" + cm_f02 + ", create_date=" + create_date
+        + ", create_user=" + create_user + ", data_type=" + data_type + ", delete_date=" + delete_date
+        + ", delete_user=" + delete_user + ", id=" + id + ", note=" + note + ", update_date=" + update_date
+        + ", update_user=" + update_user + ", value=" + value + "]";
   }
 
   public Long getId() {
@@ -209,12 +221,12 @@ public class headntail extends AbstractBaseEntity {
     this.data_type = data_type;
   }
 
-  public String getOrder_number() {
-    return order_number;
+  public String getNote() {
+    return note;
   }
 
-  public void setOrder_number(String order_number) {
-    this.order_number = order_number;
+  public void setNote(String note) {
+    this.note = note;
   }
 
   public String getValue() {
@@ -257,6 +269,22 @@ public class headntail extends AbstractBaseEntity {
     this.update_date = update_date;
   }
 
+  public String getDelete_user() {
+    return delete_user;
+  }
+
+  public void setDelete_user(String delete_user) {
+    this.delete_user = delete_user;
+  }
+
+  public String getDelete_date() {
+    return delete_date;
+  }
+
+  public void setDelete_date(String delete_date) {
+    this.delete_date = delete_date;
+  }
+
   public String getCreate_user() {
     return create_user;
   }
@@ -273,20 +301,6 @@ public class headntail extends AbstractBaseEntity {
     this.create_date = create_date;
   }
 
-  public String getDelete_user() {
-    return delete_user;
-  }
 
-  public void setDelete_user(String delete_user) {
-    this.delete_user = delete_user;
-  }
-
-  public String getDelete_date() {
-    return delete_date;
-  }
-
-  public void setDelete_date(String delete_date) {
-    this.delete_date = delete_date;
-  }
 
 }
