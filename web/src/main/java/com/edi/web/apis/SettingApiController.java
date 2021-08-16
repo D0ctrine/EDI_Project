@@ -209,12 +209,12 @@ public class SettingApiController {
   @PostMapping("/api/setting/sql")
   public ResponseEntity<ApiResult> selectSQL(@RequestBody SelectSQLPayload payload, @CurrentUser SimpleUser currentUser){
     ApiResult apiResult = ApiResult.blank();
-    if(payload.getDatabase().equals("Report")){
-      apiResult.add("reportList", sqlService.getReportQuery(payload.getQuery()));
+    if(payload.getDatabase().equals("REPORT")){
+      apiResult.add("returnList", sqlService.getReportQuery(payload.getQuery()));
     }else if(payload.getDatabase().equals("MES")){
-      apiResult.add("mesList", sqlService.getMESQuery(payload.getQuery()));
-    }else if(payload.getDatabase().equals("Coms")){
-      apiResult.add("comsList", sqlService.getComsQuery(payload.getQuery()));
+      apiResult.add("returnList", sqlService.getMESQuery(payload.getQuery()));
+    }else if(payload.getDatabase().equals("COMS")){
+      apiResult.add("returnList", sqlService.getComsQuery(payload.getQuery()));
     }
       return Result.ok(apiResult);
   }

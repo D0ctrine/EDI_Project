@@ -8,13 +8,16 @@
       >
         <v-select
           :items="items"
+          item-text="name"
+          item-value="value"
+          v-model="selectedItemValue"
           label="DB Type"
           dense
           outlined
         ></v-select>
       </v-col>
       <v-col>
-        <v-btn tile color="primary">
+        <v-btn tile color="primary" v-on:click="showResult()">
           <v-icon left size="30">
             mdi-database-search
           </v-icon>
@@ -31,7 +34,7 @@
       </v-row>
       <v-row>
         <span>
-  <h5 class="text-left">DB</h5>
+  <h5 class="text-left">{{ selectedItemValue.toUpperCase() }} DB</h5>
     <div class="codemirror">
       <codemirror ref="myCm"
                   v-model="formData.queryText"
@@ -59,12 +62,17 @@ import 'codemirror/addon/dialog/dialog.css'
 import 'codemirror/addon/search/searchcursor.js'
 import 'codemirror/addon/search/search.js'
 import 'codemirror/keymap/emacs.js'
+import settingService from '@/services/settings'
+import FileSaver from 'file-saver'
+
 export default {
   data () {
     return {
       formData: {
         queryText: ''
       },
+      content: '',
+      selectedItemValue: '',
       cmOptions: {
         tabSize: 4,
         styleActiveLine: true,
@@ -75,13 +83,13 @@ export default {
         lineWrapping: true
       },
       items: [
-        'Mes',
-        'Report',
-        'Coms'
+        { name: 'Mes', value: 'MES' },
+        { name: 'Report', value: 'REPORT' },
+        { name: 'Coms', value: 'COMS' }
       ]
     }
   },
-  props: ['selected'],
+  props: ['selected', 'settingPropsList'],
   computed: {
     codemirror () {
       return this.$refs.myCm.codemirror
@@ -99,7 +107,7 @@ export default {
       this.codemirror.setSize('800', '500')
     },
     onCmFocus (cm) {
-      // console.log('the editor is focus!', cm)
+      console.log('the editor is focus!', this.settingPropsList)
     },
     onCmCodeChange (newCode) {
       this.formData.queryText = newCode
@@ -107,6 +115,24 @@ export default {
     },
     saveData () {
       alert('saved~!')
+    },
+    async showResult () {
+      let result = await settingService.selectSQL({ query: this.formData.queryText, database: this.selectedItemValue })
+
+      this.content = await this.settingPropsList.envList.find(env => env.item === 'start').value
+      const end = await this.settingPropsList.envList.find(env => env.item === 'end').value
+      const between = await this.settingPropsList.envList.find(env => env.item === 'between').value
+
+      await result.returnList.forEach(element => {
+        for (const [, value] of Object.entries(element)) {
+          this.content += `${value} ` + between
+        }
+        this.content.slice(-(between.length-1))
+        this.content += end + '\r\n'
+      })
+
+      let blob = await new Blob([this.content], { type: 'text/plain;charset=utf-8' })
+      await FileSaver.saveAs(blob, 'download name .txt')
     }
   }
 

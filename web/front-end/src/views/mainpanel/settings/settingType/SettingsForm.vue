@@ -416,6 +416,17 @@ export default {
 
         await this.getFileData()
       }
+    },
+    sendDataToDBcomponent: function () {
+      const propsList = {
+        envList: this.$refs.envGrid.invoke('getData'),
+        headerList: this.$refs.headGrid.invoke('getData'),
+        tailList: this.$refs.tailGrid.invoke('getData'),
+        itemList: this.$refs.itemGrid.invoke('getData'),
+        fileType: this.extractFileType
+      }
+      console.log('Tab Method sendDataToDBcomponent executed!!')
+      return propsList
     }
   }
 }

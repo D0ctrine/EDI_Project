@@ -1,6 +1,7 @@
 package com.edi.domain.application.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -24,17 +25,17 @@ public class SQLServiceImpl implements SQLService{
     this.comsRepository = comsRepository;
   }
   @Override
-  public List getReportQuery(String query) {
+  public List<Map<String, Object>> getReportQuery(String query) {
     return reportRepository.selectQuery(query);
   }
 
   @Override
-  public List getMESQuery(String query) {
+  public List<Map<String, Object>> getMESQuery(String query) {
     return mesRepository.selectQuery(query);
   }
 
   @Override
-  public List getComsQuery(String query) {
+  public List<Map<String, Object>> getComsQuery(String query) {
     return comsRepository.selectQuery(query);
   }
 

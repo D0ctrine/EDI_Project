@@ -67,5 +67,14 @@ export default {
         reject(errorParser.parse(error))
       })
     })
+  },
+  selectSQL (detail) {
+    return new Promise((resolve, reject) => {
+      axios.post('/setting/sql', detail).then(({ data }) => {
+        resolve(data)
+      }).catch((error) => {
+        reject(errorParser.parse(error))
+      })
+    })
   }
 }

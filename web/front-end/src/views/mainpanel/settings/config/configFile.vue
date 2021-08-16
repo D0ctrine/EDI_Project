@@ -2,13 +2,13 @@
 <v-app>
   <h5 class="pt-3 pb-0 mb-0 green"><v-icon size="35">mdi-file-cog</v-icon>    File Common Settings</h5>
   <v-divider class="mt-1 dark"></v-divider>
-  <p style="">
-  <v-btn color="blue-grey" class="mr-16 white--text" v-on:click="saveData()" style="float: right;">
+  <p style="width: 90%;">
+  <v-btn color="blue-grey" class="white--text" v-on:click="saveData()" style="float: right;">
       Save<v-icon right dark> mdi-content-save-all</v-icon>
     </v-btn></p>
-  <v-container style="height: 780px;overflow-y:auto;overflow-x: hidden;">
+  <v-container style="height: 780px;overflow-y:auto;overflow-x: hidden;" fluid>
   <v-spacer style="height: 20px;flex-grow: 0 !important;"></v-spacer>
-  <p class="text-left itemHeader"><v-icon size="25">mdi-cog-box</v-icon> 환경(Env)
+  <p class="text-left itemHeader" style="min-width: 600px;width: 55%;"><v-icon size="25">mdi-cog-box</v-icon> 환경(Env)
   <v-btn class="mx-2" v-on:click="insertRow('grid1')" style="float: right;" fab small dark color="indigo">
       <v-icon dark>
         mdi-plus
@@ -18,7 +18,7 @@
   <grid ref="tuiGrid1" :data="envProps.data" :columns="envProps.columns" :options="envProps.options" width="600"/>
 
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
-  <p class="text-left itemHeader"><v-icon size="25">mdi-email</v-icon> 메일
+  <p class="text-left itemHeader" style="min-width: 600px;width: 55%;"><v-icon size="25">mdi-email</v-icon> 메일
   <v-btn class="mx-2" v-on:click="insertRow('grid2')" style="float: right;" fab small dark color="indigo">
       <v-icon dark>
         mdi-plus
@@ -28,7 +28,7 @@
   <grid ref="tuiGrid2" :data="mailProps.data" :columns="mailProps.columns" :options="mailProps.options" width="600"/>
 
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
-  <p class="text-left itemHeader"><v-icon size="25">mdi-file-star</v-icon> FTP
+  <p class="text-left itemHeader" style="min-width: 600px;width: 55%;"><v-icon size="25">mdi-file-star</v-icon> FTP
   <v-btn class="mx-2" v-on:click="insertRow('grid3')" style="float: right;" fab small dark color="indigo">
       <v-icon dark>
         mdi-plus
@@ -38,7 +38,7 @@
   <grid ref="tuiGrid3" :data="ftpProps.data" :columns="ftpProps.columns" :options="ftpProps.options" width="600"/>
 
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
-  <p class="text-left itemHeader"><v-icon size="25">mdi-database-arrow-right</v-icon> Value
+  <p class="text-left itemHeader" style="min-width: 600px;width: 55%;"><v-icon size="25">mdi-database-arrow-right</v-icon> Value
   <v-btn class="mx-2" v-on:click="insertRow('grid4')" style="float: right;" fab small dark color="indigo">
       <v-icon dark>
         mdi-plus

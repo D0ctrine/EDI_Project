@@ -5,7 +5,7 @@
           <v-tab href="#mobile-tabs-5-1" style="text-decoration: none;">
             <v-icon>mdi-cog</v-icon> 설정
           </v-tab>
-          <v-tab href="#mobile-tabs-5-2" style="text-decoration: none;">
+          <v-tab href="#mobile-tabs-5-2" style="text-decoration: none;" @click="getDataToDBcomponent">
             <v-icon>mdi-database-cog</v-icon> DB
           </v-tab>
         </v-tabs>
@@ -14,9 +14,9 @@
       <v-tab-item v-for="i in 2" :key="i" :value="'mobile-tabs-5-' + i">
           <v-scroll-y-transition mode="out-in">
           <v-card class="mt-6 mx-auto" flat>
-              <SettingsForm v-if="i == 1" v-bind:selected='selectedList' />
+              <SettingsForm v-if="i == 1" ref="settings" v-bind:selected='selectedList' />
             <v-card-text v-if="i == 2">
-              <DBsForm style="" v-bind:selected='selectedList'/>
+              <DBsForm style="" v-bind:selected='selectedList' v-bind:settingPropsList='settingList'/>
             </v-card-text>
           </v-card>
         </v-scroll-y-transition>
@@ -32,7 +32,8 @@ export default {
   data () {
     return {
       tabs: null,
-      selectedList: this.selected
+      selectedList: this.selected,
+      settingList: []
     }
   },
   props: ['selected'],
@@ -41,6 +42,14 @@ export default {
     DBsForm
   },
   computed: {
+  },
+  methods: {
+    getDataToDBcomponent: async function () {
+      console.log('Tab Method getDataToDBcomponent executed!!')
+      this.settingList = await this.$refs.settings[0].sendDataToDBcomponent()
+      console.log(await this.settingList)
+      return this.settingList
+    }
   }
 }
 </script>
