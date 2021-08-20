@@ -51,9 +51,9 @@ public class HeadnTailServiceImpl implements HeadnTailService{
     List<headntail> hList = new ArrayList<headntail>();
     for(int i=0;i<htc.size();i++){
       headntail hnt = headntail.update(htc.get(i).getId(), htc.get(i).getUserId(), htc.get(i).getCfgId(), htc.get(i).getDataType(), htc.get(i).getNote(), htc.get(i).getValue());
-      hRepository.save(hnt);
       hList.add(hnt);
     }
+    hRepository.updateHnTData(hList);
     return hList;
   }
 

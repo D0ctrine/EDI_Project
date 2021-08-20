@@ -26,7 +26,7 @@ public class QueryServiceImpl implements QueryService{
   public List<QuerySetting> create(List<CreateQueryCommand> qc) {
     List<QuerySetting> querySettingList = new ArrayList<>();
     for(int i=0; i<qc.size(); i++){
-      QuerySetting qSetting = QuerySetting.create(qc.get(i).getUserId(), qc.get(i).getSettingId(), qc.get(i).getKey(), qc.get(i).getType(), qc.get(i).getQuery());
+      QuerySetting qSetting = QuerySetting.create(qc.get(i).getUserId(), qc.get(i).getSettingId(), qc.get(i).getKey(), qc.get(i).getType(), qc.get(i).getQuery(), qc.get(i).getDbType());
       queryRepository.save(qSetting);
       querySettingList.add(qSetting);
     }
@@ -35,7 +35,7 @@ public class QueryServiceImpl implements QueryService{
 
   @Override
   public QuerySetting delete(UpdateQueryCommand qc) {
-    QuerySetting qSetting = QuerySetting.update(qc.getId(), qc.getUserId(), qc.getSettingId(), qc.getKey(), qc.getType(), qc.getQuery());
+    QuerySetting qSetting = QuerySetting.update(qc.getId(), qc.getUserId(), qc.getSettingId(), qc.getKey(), qc.getType(), qc.getQuery(), qc.getDbType());
       queryRepository.deleteQueryData(qSetting);
     return qSetting;
   }
@@ -46,10 +46,15 @@ public class QueryServiceImpl implements QueryService{
   }
 
   @Override
+  public QuerySetting getMainQuery(String settingId) {
+    return queryRepository.getMainQueryData(settingId);
+  }
+
+  @Override
   public List<QuerySetting> update(List<UpdateQueryCommand> qc) {
     List<QuerySetting> querySettingList = new ArrayList<>();
     for(int i=0; i<qc.size(); i++){
-      QuerySetting fSetting = QuerySetting.update(qc.get(i).getId(), qc.get(i).getUserId(), qc.get(i).getSettingId(), qc.get(i).getKey(), qc.get(i).getType(), qc.get(i).getQuery());
+      QuerySetting fSetting = QuerySetting.update(qc.get(i).getId(), qc.get(i).getUserId(), qc.get(i).getSettingId(), qc.get(i).getKey(), qc.get(i).getType(), qc.get(i).getQuery(), qc.get(i).getDbType());
       querySettingList.add(fSetting);
     }
     querySettingList = queryRepository.updateQueryData(querySettingList);
@@ -58,9 +63,10 @@ public class QueryServiceImpl implements QueryService{
 
   @Override
   public QuerySetting createMainQuery(CreateQueryCommand qc) {
-    QuerySetting qSetting = QuerySetting.create(qc.getUserId(), qc.getSettingId(), qc.getKey(), qc.getType(), qc.getQuery());
+    QuerySetting qSetting = QuerySetting.create(qc.getUserId(), qc.getSettingId(), qc.getKey(), qc.getType(), qc.getQuery(), qc.getDbType());
     queryRepository.save(qSetting);
     return qSetting;
   }
+
 
 }

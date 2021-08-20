@@ -34,7 +34,7 @@
       </v-row>
       <v-row>
         <span>
-  <h5 class="text-left">{{ selectedItemValue.toUpperCase() }} DB</h5>
+  <h5 class="text-left">{{ selectedItemValue }} DB</h5>
     <div class="codemirror">
       <codemirror ref="myCm"
                   v-model="formData.queryText"
@@ -64,6 +64,7 @@ import 'codemirror/addon/search/search.js'
 import 'codemirror/keymap/emacs.js'
 import settingService from '@/services/settings'
 import FileSaver from 'file-saver'
+import convert from 'xml-js'
 
 export default {
   data () {
@@ -90,6 +91,15 @@ export default {
     }
   },
   props: ['selected', 'settingPropsList'],
+  created () {
+    settingService.getSQL(this.selected.id).then((returnList) => {
+      this.formData.queryText = returnList.MainQuery.query
+      this.selectedItemValue = returnList.MainQuery.db_type
+    }).catch(error => {
+      this.errorMessage = error.message
+      console.log(this.errorMessage)
+    })
+  },
   computed: {
     codemirror () {
       return this.$refs.myCm.codemirror
@@ -107,30 +117,69 @@ export default {
       this.codemirror.setSize('800', '500')
     },
     onCmFocus (cm) {
-      console.log('the editor is focus!', this.settingPropsList)
+      console.log('the editor is focus!')
     },
     onCmCodeChange (newCode) {
       this.formData.queryText = newCode
+      console.log('코드 변경됨')
       this.$emit('codeChange', this.formData.queryText)
     },
     saveData () {
-      alert('saved~!')
+      settingService.saveSQL({ query: this.formData.queryText, type: 'Main', settingId: this.selected.id }).then(alert('Saved!')).catch(error => { alert(error.message) })
     },
     async showResult () {
       let result = await settingService.selectSQL({ query: this.formData.queryText, database: this.selectedItemValue })
+      const header = await this.settingPropsList.headerList
+      const tail = await this.settingPropsList.tailList
+      const start = await this.settingPropsList.envList.find(env => env.item === 'start').value
+      const end = await this.settingPropsList.envList.find(env => env.item === 'end').value.toString()
+      const between = await this.settingPropsList.envList.find(env => env.item === 'between').value.toString()
 
-      this.content = await this.settingPropsList.envList.find(env => env.item === 'start').value
-      const end = await this.settingPropsList.envList.find(env => env.item === 'end').value
-      const between = await this.settingPropsList.envList.find(env => env.item === 'between').value
-
-      await result.returnList.forEach(element => {
-        for (const [, value] of Object.entries(element)) {
-          this.content += `${value} ` + between
+      for (const element of header) {
+        console.log(element)
+        if (element.data_type.toString() === 'h_sql') {
+          this.content += await settingService.selectSQL({ query: element.value.toString(), database: 'REPORT' }).then((sqlList) => sqlList.returnList[0].VALUE).catch(error => { console.log(error.message) })
+        } else {
+          this.content += await element.value
         }
-        this.content.slice(-(between.length-1))
-        this.content += end + '\r\n'
-      })
+        // tail 1,2,3,,,마다 줄 바꿈
+        this.content += await '\r\n'
+      }
 
+      if (this.settingPropsList.fileType === 'xml') {
+        console.log('Its XML !=======')
+        this.content += await convert.json2xml({ WorkinProcess: { _attributes: result.returnList } }, { compact: true, ignoreComment: true, spaces: 4 })
+        this.content += '\r\n'
+      } else if (this.settingPropsList.fileType === 'text') {
+        for (const element of result.returnList) {
+          this.content += await start
+          for (const [, value] of Object.entries(element)) {
+            this.content += await `${value}` + between
+          }
+          this.content.slice(-(between.length - 1))
+          this.content += end.value + '\r\n'
+        }
+      } else {
+
+      }
+
+      await tail.forEach(element => {
+        if (element.data_type.toString() === 't_sql') {
+          settingService.selectSQL({ query: element.value.toString(), database: 'REPORT' }).then((sqlList) => {
+            console.log('sqlList ======')
+            console.log(sqlList)
+            sqlList.forEach(element => {
+              for (const [, value] of Object.entries(element)) {
+                this.content += `${value} ` + between
+              }
+            })
+          }).catch(error => { console.log(error.message) })
+        } else {
+          this.content += element.value
+        }
+        // header 1,2,3,,,마다 줄 바꿈
+        this.content += '\r\n'
+      })
       let blob = await new Blob([this.content], { type: 'text/plain;charset=utf-8' })
       await FileSaver.saveAs(blob, 'download name .txt')
     }

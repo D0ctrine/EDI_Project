@@ -76,5 +76,23 @@ export default {
         reject(errorParser.parse(error))
       })
     })
+  },
+  saveSQL (detail) {
+    return new Promise((resolve, reject) => {
+      axios.post('/setting/bigQuery', detail).then(({ data }) => {
+        resolve(data)
+      }).catch((error) => {
+        reject(errorParser.parse(error))
+      })
+    })
+  },
+  getSQL (detail) {
+    return new Promise((resolve, reject) => {
+      axios.get('/setting/getMainQuery?categoryId=' + detail).then(({ data }) => {
+        resolve(data)
+      }).catch((error) => {
+        reject(errorParser.parse(error))
+      })
+    })
   }
 }

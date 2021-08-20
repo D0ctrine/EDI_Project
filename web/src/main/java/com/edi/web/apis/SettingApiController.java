@@ -226,4 +226,11 @@ public class SettingApiController {
     apiResult.add("SQL", queryService.createMainQuery(queryCommand));
       return Result.ok(apiResult);
   }
+
+  @GetMapping("/api/setting/getMainQuery")
+  public ResponseEntity<ApiResult> getMainQuery(@RequestParam String categoryId, @CurrentUser SimpleUser currentUser){
+      ApiResult apiResult = ApiResult.blank();
+      apiResult.add("MainQuery", queryService.getMainQuery(categoryId));
+      return Result.ok(apiResult);
+  }
 }

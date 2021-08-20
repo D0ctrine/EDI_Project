@@ -45,9 +45,7 @@ export default {
   },
   methods: {
     getDataToDBcomponent: async function () {
-      console.log('Tab Method getDataToDBcomponent executed!!')
       this.settingList = await this.$refs.settings[0].sendDataToDBcomponent()
-      console.log(await this.settingList)
       return this.settingList
     }
   }

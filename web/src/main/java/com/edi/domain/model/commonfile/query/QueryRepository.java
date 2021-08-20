@@ -7,7 +7,10 @@ public interface QueryRepository {
    * 설정된 Value값들을 가져온다.
    */
   List<QuerySetting> getQueryData(String configId);
-
+  /**
+   * 설정된 Main Value값을 가져온다.
+   */
+  QuerySetting getMainQueryData(String configId);
   /**
    * 해당하는 데이터를 가져온다.
    */

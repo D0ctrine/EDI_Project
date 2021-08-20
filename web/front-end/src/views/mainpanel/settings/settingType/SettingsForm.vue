@@ -22,7 +22,7 @@
 
     <v-row>
       <span class="text-left">
-        <p class="itemHeader"><v-icon size="30">mdi-star-four-points</v-icon> 주기(Crontab)</p>
+        <p class="itemHeader"><v-icon size="30">mdi-calendar-clock</v-icon> 주기(Crontab)</p>
       <VueCronEditorBuefy v-model="cronExpression"/>
     {{cronExpression}}
       </span>
@@ -31,7 +31,7 @@
 
       <v-row>
         <span class="text-left">
-          <p class="itemHeader"><v-icon size="30">mdi-star-four-points</v-icon> 파일 추출 방식</p>
+          <p class="itemHeader"><v-icon size="30">mdi-file-upload-outline</v-icon> 파일 추출 방식</p>
     <v-radio-group v-model="extractFileType" row dense>
       <v-radio label="Text" value="text"></v-radio>
       <v-radio label="XML" value="xml"></v-radio>
@@ -44,7 +44,7 @@
 
     <v-row>
       <span class="text-left">
-        <p class="itemHeader"><v-icon size="30">mdi-star-four-points</v-icon> 환경(Env)
+        <p class="itemHeader"><v-icon size="30">mdi-cog-transfer-outline</v-icon> 환경(Env)
           <v-btn class="mx-2" v-on:click="insertRow('envGrid')" style="float: right;" fab small dark color="indigo">
             <v-icon dark>
               mdi-plus
@@ -59,7 +59,7 @@
 
     <v-row>
       <span class="text-left">
-      <p class="text-left itemHeader"><v-icon size="30">mdi-star-four-points</v-icon> Header
+      <p class="text-left itemHeader"><v-icon size="30">mdi-page-layout-header</v-icon> Header
           <v-btn class="mx-2" v-on:click="insertRow('headGrid')" style="float: right;" fab small dark color="indigo">
             <v-icon dark>
               mdi-plus
@@ -74,7 +74,7 @@
 
     <v-row>
       <span class="text-left">
-      <p class="text-left itemHeader"><v-icon size="30">mdi-star-four-points</v-icon> Tail
+      <p class="text-left itemHeader"><v-icon size="30">mdi-page-layout-footer</v-icon> Tail
           <v-btn class="mx-2" v-on:click="insertRow('tailGrid')" style="float: right;" fab small dark color="indigo">
             <v-icon dark>
               mdi-plus
@@ -89,7 +89,7 @@
 
     <v-row>
       <span class="text-left">
-      <p class="text-left itemHeader"><v-icon size="30">mdi-star-four-points</v-icon> 컬럼명(Convert)
+      <p class="text-left itemHeader"><v-icon size="30">mdi-help-circle-outline</v-icon> 컬럼명(Convert)
           <v-btn class="mx-2" v-on:click="insertRow('itemGrid')" style="float: right;" fab small dark color="indigo">
             <v-icon dark>
               mdi-plus
@@ -279,7 +279,32 @@ const headercols4 = [ // query
     header: 'Type',
     name: 'type',
     align: 'center',
-    editor: 'text'
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: [
+          { text: 'DB', value: 'DB' },
+          { text: 'Text', value: 'TEXT' }
+        ]
+      }
+    }
+  },
+  {
+    header: 'DB-Type',
+    name: 'dbType',
+    align: 'center',
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: [
+          { text: 'Coms', value: 'COMS' },
+          { text: 'Report', value: 'REPORT' },
+          { text: 'Mes', value: 'MES' }
+        ]
+      }
+    }
   },
   {
     header: 'Del',
@@ -346,9 +371,6 @@ export default {
           await response.envList.forEach((element) => { element.gridName = 'envGrid' })
           await response.itemList.forEach((element) => { element.gridName = 'itemGrid' })
 
-          console.log('gridProps Head N Tail')
-          console.log(this.gridHeadProps.data)
-          console.log(this.gridTailProps.data)
           await this.$refs.envGrid.invoke('resetData', response.envList)
           await this.$refs.itemGrid.invoke('resetData', response.itemList)
           await this.$refs.tailGrid.invoke('resetData', this.gridTailProps.data)
@@ -381,7 +403,7 @@ export default {
       grid.invoke('appendRow', rowData, { at: cnt, focus: true })
     },
     saveData: async function () {
-      if (confirm('저장하시겠습니까?')) {
+      if (checkValid() && confirm('저장하시겠습니까?')) {
         let env = await this.$refs.envGrid.invoke('getModifiedRows').createdRows
         let head = await this.$refs.headGrid.invoke('getModifiedRows').createdRows
         let tail = await this.$refs.tailGrid.invoke('getModifiedRows').createdRows

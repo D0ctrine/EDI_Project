@@ -8,9 +8,10 @@ public class CreateQueryPayload {
   private String key;
   private String type;
   private String query;
+  private String dbType;
 
   public CreateQueryCommand toCommand(UserId userId) {
-    return new CreateQueryCommand(userId,settingId,key,type,query);
+    return new CreateQueryCommand(userId,settingId,key,type,query,dbType);
   }
 
   public void setSettingId(String settingId) {
@@ -24,6 +25,9 @@ public class CreateQueryPayload {
   }
   public void setQuery(String query) {
     this.query = query;
+  }
+  public void setDbType(String dbType) {
+    this.dbType = dbType;
   }
 
 }

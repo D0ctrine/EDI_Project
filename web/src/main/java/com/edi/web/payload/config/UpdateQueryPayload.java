@@ -9,9 +9,10 @@ public class UpdateQueryPayload {
   private String key;
   private String type;
   private String query;
+  private String dbType;
 
   public UpdateQueryCommand toCommand(UserId userId){
-    return new UpdateQueryCommand(id, userId, settingId, key, type, query);
+    return new UpdateQueryCommand(id, userId, settingId, key, type, query, dbType);
   }
 
   public Long getId() {
@@ -36,6 +37,10 @@ public class UpdateQueryPayload {
 
   public void setSettingId(String settingId) {
     this.settingId = settingId;
+  }
+
+  public String getDbType() {
+    return dbType;
   }
 
 }

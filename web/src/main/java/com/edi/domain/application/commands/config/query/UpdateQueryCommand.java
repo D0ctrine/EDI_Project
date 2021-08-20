@@ -9,14 +9,17 @@ public class UpdateQueryCommand {
   private String key;
   private String type;
   private String query;
+  private String dbType;
 
-  public UpdateQueryCommand(Long id,UserId userId,String settingId,String key,String type,String query){
+
+  public UpdateQueryCommand(Long id,UserId userId,String settingId,String key,String type,String query,String dbType){
     this.id = id;
     this.userId = userId;
     this.settingId = settingId;
     this.key = key;
     this.type = type;
     this.query = query;
+    this.dbType = dbType;
   }
 
   public Long getId() {
@@ -42,4 +45,9 @@ public class UpdateQueryCommand {
   public String getQuery() {
     return query;
   }
+
+  public String getDbType() {
+    return dbType;
+  }
+
 }

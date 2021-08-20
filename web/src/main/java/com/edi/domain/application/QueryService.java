@@ -34,4 +34,9 @@ public interface QueryService {
    * 카테고리 갱신
    */
   List<QuerySetting> update(List<UpdateQueryCommand> qc);
+
+  /**
+   * 메인 쿼리 가져오기
+   */
+  QuerySetting getMainQuery(String settingId);
 }

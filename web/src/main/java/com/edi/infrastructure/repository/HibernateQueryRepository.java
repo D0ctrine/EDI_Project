@@ -36,7 +36,7 @@ public class HibernateQueryRepository extends HibernateSupport<QuerySetting> imp
 
   @Override
   public List<QuerySetting> getQueryData(String configId) {
-    Query<QuerySetting> query = getSession().createQuery("FROM QuerySetting where setting_id=:cfgid",QuerySetting.class)
+    Query<QuerySetting> query = getSession().createQuery("FROM QuerySetting where setting_id=:cfgid AND TYPE!='Main'",QuerySetting.class)
                                             .setParameter("cfgid", configId);
     return query.list();
   }
@@ -56,6 +56,14 @@ public class HibernateQueryRepository extends HibernateSupport<QuerySetting> imp
       if(result == 1) qList.add(qSetting);
     }
     return qList;
+  }
+
+  @Override
+  public QuerySetting getMainQueryData(String configId) {
+    Query<QuerySetting> query = getSession().createNativeQuery("SELECT * FROM QUERY_SETTING "
+      +"WHERE ID=(SELECT MAX(ID) FROM QUERY_SETTING WHERE TYPE='Main' AND SETTING_ID=:id)",QuerySetting.class)
+                                          .setParameter("id", configId);
+    return query.uniqueResult();
   }
 
 }
