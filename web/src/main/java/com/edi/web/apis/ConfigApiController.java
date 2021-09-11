@@ -202,4 +202,14 @@ public class ConfigApiController {
       ApiResult apiResult = ApiResult.blank();
       return Result.ok(apiResult);
   }
+
+  @GetMapping("/api/config/ftp")
+  public ResponseEntity<ApiResult> getConfigFtp(@RequestParam String categoryId,
+                                             @CurrentUser SimpleUser currentUser) {
+    List<FtpSetting> ftpList = new ArrayList<>();
+    if(categoryId!=null) ftpList = ftpService.getList(categoryId);
+    ApiResult apiResult = ApiResult.blank();
+    apiResult.add("ftpList", ftpList);
+    return Result.ok(apiResult);
+  }
 }

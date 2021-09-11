@@ -94,5 +94,14 @@ export default {
         reject(errorParser.parse(error))
       })
     })
+  },
+  updateFileSendFlag (detail) {
+    return new Promise((resolve, reject) => {
+      axios.get('/fileDefine/statusChange?fileDefineId=' + detail.fileDefineId + '&flag=' + detail.flag).then(({ data }) => {
+        resolve(data)
+      }).catch((error) => {
+        reject(errorParser.parse(error))
+      })
+    })
   }
 }

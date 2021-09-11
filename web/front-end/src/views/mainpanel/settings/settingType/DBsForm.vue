@@ -34,7 +34,8 @@
       </v-row>
       <v-row>
         <span>
-  <h5 class="text-left">{{ selectedItemValue }} DB</h5>
+  <h5 class="text-left" style="float: left;">{{ selectedItemValue }} DB</h5>
+  <h6 style="float: right;color: red;">{{ modifiedAlarm }}</h6>
     <div class="codemirror">
       <codemirror ref="myCm"
                   v-model="formData.queryText"
@@ -70,10 +71,13 @@ export default {
   data () {
     return {
       formData: {
-        queryText: ''
+        queryText: '',
+        orginalQueryText: ''
       },
       content: '',
       selectedItemValue: '',
+      modifiedAlarm: '',
+      modifiedTime: '',
       cmOptions: {
         tabSize: 4,
         styleActiveLine: true,
@@ -94,6 +98,7 @@ export default {
   created () {
     settingService.getSQL(this.selected.id).then((returnList) => {
       this.formData.queryText = returnList.MainQuery.query
+      this.formData.orginalQueryText = returnList.MainQuery.query
       this.selectedItemValue = returnList.MainQuery.db_type
     }).catch(error => {
       this.errorMessage = error.message
@@ -120,20 +125,44 @@ export default {
       console.log('the editor is focus!')
     },
     onCmCodeChange (newCode) {
+      if (this.formData.orginalQueryText !== newCode) {
+        if (this.modifiedTime === '') {
+          let today = new Date()
+          this.modifiedTime = today.toLocaleString()
+          this.modifiedAlarm = this.modifiedTime + '  변경 시작됨(저장 필요!)'
+        }
+      } else {
+        this.modifiedAlarm = ''
+        this.modifiedTime = ''
+      }
       this.formData.queryText = newCode
-      console.log('코드 변경됨')
       this.$emit('codeChange', this.formData.queryText)
     },
-    saveData () {
-      settingService.saveSQL({ query: this.formData.queryText, type: 'Main', settingId: this.selected.id }).then(alert('Saved!')).catch(error => { alert(error.message) })
+    refreshData () {
+      settingService.getSQL(this.selected.id).then((returnList) => {
+        this.formData.queryText = returnList.MainQuery.query
+        this.formData.orginalQueryText = returnList.MainQuery.query
+        this.selectedItemValue = returnList.MainQuery.db_type
+      }).catch(error => {
+        this.errorMessage = error.message
+        console.log(this.errorMessage)
+      })
+    },
+    async saveData () {
+      await settingService.saveSQL({ query: this.formData.queryText, type: 'Main', settingId: this.selected.id }).then(() => {
+        alert('Saved!')
+        this.orginalQueryText = this.formData.queryText
+        this.modifiedTime = ''
+      }).catch(error => { alert(error.message) })
     },
     async showResult () {
       let result = await settingService.selectSQL({ query: this.formData.queryText, database: this.selectedItemValue })
       const header = await this.settingPropsList.headerList
       const tail = await this.settingPropsList.tailList
       const start = await this.settingPropsList.envList.find(env => env.item === 'start').value
-      const end = await this.settingPropsList.envList.find(env => env.item === 'end').value.toString()
-      const between = await this.settingPropsList.envList.find(env => env.item === 'between').value.toString()
+      const end = await this.settingPropsList.envList.find(env => env.item === 'end').value
+      const between = await this.settingPropsList.envList.find(env => env.item === 'between').value
+      this.content = ''
 
       for (const element of header) {
         console.log(element)
@@ -146,11 +175,16 @@ export default {
         this.content += await '\r\n'
       }
 
-      if (this.settingPropsList.fileType === 'xml') {
+      if (this.settingPropsList.dataType === 'xml') {
         console.log('Its XML !=======')
-        this.content += await convert.json2xml({ WorkinProcess: { _attributes: result.returnList } }, { compact: true, ignoreComment: true, spaces: 4 })
-        this.content += '\r\n'
-      } else if (this.settingPropsList.fileType === 'text') {
+        let parent = await this.settingPropsList.envList.find(env => env.item === 'parent').value
+        let flatArrayJson = {}
+        for (const element of result.returnList) {
+          flatArrayJson[parent] = { _attributes: element }
+          this.content += await convert.json2xml(flatArrayJson, { compact: true, ignoreComment: true, spaces: 4 })
+          this.content += '\r\n'
+        }
+      } else if (this.settingPropsList.dataType === 'text') {
         for (const element of result.returnList) {
           this.content += await start
           for (const [, value] of Object.entries(element)) {
@@ -180,8 +214,8 @@ export default {
         // header 1,2,3,,,마다 줄 바꿈
         this.content += '\r\n'
       })
-      let blob = await new Blob([this.content], { type: 'text/plain;charset=utf-8' })
-      await FileSaver.saveAs(blob, 'download name .txt')
+      let blob = await new Blob([this.content], { type: 'text/plain;charset=' + this.settingPropsList.charSet })
+      await FileSaver.saveAs(blob, this.settingPropsList.fileName + '.' + this.settingPropsList.fileType)
     }
   }
 

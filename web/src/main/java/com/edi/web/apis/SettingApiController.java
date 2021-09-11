@@ -230,7 +230,22 @@ public class SettingApiController {
   @GetMapping("/api/setting/getMainQuery")
   public ResponseEntity<ApiResult> getMainQuery(@RequestParam String categoryId, @CurrentUser SimpleUser currentUser){
       ApiResult apiResult = ApiResult.blank();
-      apiResult.add("MainQuery", queryService.getMainQuery(categoryId));
+      QuerySetting query = queryService.getMainQuery(categoryId);
+      if(query==null)apiResult.add("MainQuery", "");
+      else apiResult.add("MainQuery", queryService.getMainQuery(categoryId));
+
       return Result.ok(apiResult);
+  }
+
+  @GetMapping("/api/fileDefine/statusChange")
+  public ResponseEntity<ApiResult> fileDefineStatusChange(@RequestParam String fileDefineId,@RequestParam String flag,
+                                             @CurrentUser SimpleUser currentUser) {
+    int result=-1;
+    if(fileDefineId!=null){
+      result = fileDefService.updateCronSendFlag(fileDefineId, flag);
+    }
+    ApiResult apiResult = ApiResult.blank();
+    apiResult.add("statusChageResult",result);
+    return Result.ok(apiResult);
   }
 }

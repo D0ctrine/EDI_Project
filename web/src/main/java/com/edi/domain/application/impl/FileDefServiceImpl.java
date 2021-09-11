@@ -22,14 +22,14 @@ public class FileDefServiceImpl implements FileDefService{
 
   @Override
   public file_define create(CreateFileDefCommand ec) {
-      file_define fDef = file_define.create(ec.getUserId(), ec.getCfgId(), ec.getDescription(), ec.getCronData() ,ec.getFileExtractType());
+      file_define fDef = file_define.create(ec.getUserId(), ec.getCfgId(), ec.getFileName(), ec.getDescription(), ec.getFileCharset(), ec.getDataType(), ec.getFileType(), ec.getFtpEnvid(), ec.getSchMin(), ec.getSchHour(), ec.getSchDay(), ec.getSchWeek(), ec.getSchMonth(), ec.getNoDataSend(), ec.getSendFlag());
       fDefRepository.save(fDef);
     return fDef;
   }
 
   @Override
   public file_define delete(UpdateFileDefCommand ec) {
-    file_define fdef = file_define.update(ec.getId(), ec.getUserid(), ec.getCfgId(), ec.getDescription(), ec.getCronData(), ec.getFileExtractType());
+    file_define fdef = file_define.update(ec.getId(), ec.getUserid(), ec.getCfgId(), ec.getFileName(), ec.getDescription(), ec.getFileCharset(), ec.getDataType(), ec.getFileType(), ec.getFtpEnvid(), ec.getSchMin(), ec.getSchHour(), ec.getSchDay(), ec.getSchWeek(), ec.getSchMonth(), ec.getNoDataSend());
     fdef.setDelete_date(fdef.getUpdate_date());
     fdef.setDelete_user(fdef.getUpdate_user());
     fDefRepository.deleteFileDefData(fdef);
@@ -44,9 +44,14 @@ public class FileDefServiceImpl implements FileDefService{
 
   @Override
   public file_define update(UpdateFileDefCommand ec) {
-    file_define fdefList = file_define.update(ec.getId(), ec.getUserid(), ec.getCfgId(), ec.getDescription(), ec.getCronData(), ec.getFileExtractType());
+    file_define fdefList = file_define.update(ec.getId(), ec.getUserid(), ec.getCfgId(), ec.getFileName(), ec.getDescription(), ec.getFileCharset(), ec.getDataType(), ec.getFileType(), ec.getFtpEnvid(), ec.getSchMin(), ec.getSchHour(), ec.getSchDay(), ec.getSchWeek(), ec.getSchMonth(), ec.getNoDataSend());
     fDefRepository.updateFileDefData(fdefList);
     return fdefList;
+  }
+
+  @Override
+  public int updateCronSendFlag(String id, String flag) {
+    return fDefRepository.updateFileDefSendFlag(id, flag);
   }
 
 }

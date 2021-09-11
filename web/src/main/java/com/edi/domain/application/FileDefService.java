@@ -1,7 +1,5 @@
 package com.edi.domain.application;
 
-import java.util.List;
-
 import com.edi.domain.application.commands.setting.fileDefine.CreateFileDefCommand;
 import com.edi.domain.application.commands.setting.fileDefine.UpdateFileDefCommand;
 import com.edi.domain.model.settingfile.Setting.file_define;
@@ -25,4 +23,10 @@ public interface FileDefService {
    * 파일 세팅 갱신
    */
   file_define update(UpdateFileDefCommand ec);
+
+  /**
+   * 파일 실행 여부 수정
+   * ID(PK)를 통해 파일 스케줄러 flag 값 수정.
+   */
+  int updateCronSendFlag(String id,String flag);
 }

@@ -60,14 +60,10 @@
               </v-icon>
             </h2>
           </div>
-          <div v-if="selected">
-          <div v-if="selected.file_type === 'COG'">
-            <configFile v-bind:selected='selected' />
-          </div>
-          <div v-if="selected.file_type === 'TXT'">
-            <settingTabs v-bind:selected='selected' />
-          </div>
-          </div>
+          <v-container v-if="selected">
+            <configFile v-bind:selected='selected' v-if="selected.file_type === 'COG'"/>
+            <settingTabs v-bind:selected='selected' v-if="selected.file_type === 'TXT'"/>
+          </v-container>
       </v-col>
     </v-row>
   </v-card>
@@ -99,6 +95,7 @@ export default {
 
         for (let i = 0; i < list.length; i++) {
           list[i].pid = list[i].parent
+          list[i].dragDisabled = true
           if (list[i].file_type === 'folder') list[i].isLeaf = false
           else list[i].isLeaf = true
 
@@ -188,14 +185,18 @@ export default {
     },
     onClick (params) {
       console.log('--------------------active & params-------------------')
-      console.log(this.active[0])
-      console.log(params.parent.name)
       this.active = []
       if (params.file_type && params.file_type === 'file') {
         if (params.depth === '2') params.file_type = 'COG'
         else if (params.depth === '3' && params.parent.name === 'OUT') params.file_type = 'TXT'
         else if (params.depth === '3' && params.parent.name === 'IN') params.file_type = 'TXT2'
-        if (params.file_type === 'COG' || params.file_type === 'TXT') this.active.push(params)
+
+        if (params.file_type === 'COG' || params.file_type === 'TXT') {
+          this.$nextTick(function () {
+            this.active.push(params)
+          })
+        }
+        console.log(params.parent.name)
       }
     },
     addNode () {
@@ -221,9 +222,8 @@ export default {
     },
     selected () {
       if (!this.active.length) return undefined
-      const type = this.active[0]
       console.log('selected!!')
-      return type
+      return this.active[0]
     }
   }
 }

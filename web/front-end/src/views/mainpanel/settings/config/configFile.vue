@@ -1,11 +1,13 @@
 <template>
 <v-app>
   <h5 class="pt-3 pb-0 mb-0 green"><v-icon size="35">mdi-file-cog</v-icon>    File Common Settings</h5>
-  <v-divider class="mt-1 dark"></v-divider>
-  <p style="width: 90%;">
-  <v-btn color="blue-grey" class="white--text" v-on:click="saveData()" style="float: right;">
+  <v-divider class="dark mt-1"></v-divider>
+  <p>
+  <v-btn color="blue-grey" class="white--text mr-16 mb-1" v-on:click="saveData()" style="float: right;">
       Save<v-icon right dark> mdi-content-save-all</v-icon>
-    </v-btn></p>
+    </v-btn>
+    <v-progress-linear  class="mt-1" indeterminate v-if="this.lineProcess" color="yellow darken-2"></v-progress-linear>
+    </p>
   <v-container style="height: 780px;overflow-y:auto;overflow-x: hidden;" fluid>
   <v-spacer style="height: 20px;flex-grow: 0 !important;"></v-spacer>
   <p class="text-left itemHeader" style="min-width: 600px;width: 55%;"><v-icon size="25">mdi-cog-box</v-icon> 환경(Env)
@@ -287,6 +289,7 @@ export default {
   },
   data () {
     return {
+      lineProcess: true,
       envProps: { columns: envCols, options: options },
       mailProps: { columns: mailCols, options: options },
       ftpProps: { columns: ftpCols, options: options },
@@ -319,6 +322,7 @@ export default {
       this.$refs.tuiGrid2.invoke('resetData', settingList.emailList)
       this.$refs.tuiGrid3.invoke('resetData', settingList.ftpList)
       this.$refs.tuiGrid4.invoke('resetData', settingList.itemList)
+      this.lineProcess = false
     }).catch(error => {
       this.errorMessage = error.message
       console.log(this.errorMessage)

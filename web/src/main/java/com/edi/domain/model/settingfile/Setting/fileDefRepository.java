@@ -25,4 +25,6 @@ public interface fileDefRepository {
    * 사용할 쿼리 데이터 신규 저장
    */
   void save(file_define fdef);
+
+  int updateFileDefSendFlag(String id,String flag);
 }

@@ -68,5 +68,14 @@ export default {
         reject(errorParser.parse(error))
       })
     })
+  },
+  getFtp (detail) {
+    return new Promise((resolve, reject) => {
+      axios.get('/config/ftp?categoryId=' + detail).then(({ data }) => {
+        resolve(data)
+      }).catch((error) => {
+        reject(errorParser.parse(error))
+      })
+    })
   }
 }

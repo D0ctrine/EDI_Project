@@ -43,17 +43,38 @@ public class HibernateFileDefRepository extends HibernateSupport<file_define> im
 
   @Override
   public file_define updateFileDefData(file_define fdef) {
-      getSession().createQuery("UPDATE FROM file_define SET FILE_DESC=:file_desc, CRON_DATA=:cron_data, EXTRACT_TYPE=:extract_type, CM_F01=:cm_f01, CM_F02=:cm_f02, UPDATE_USER=:update_user, UPDATE_DATE=:update_date WHERE ID=:id")
+      getSession().createQuery("UPDATE FROM file_define SET FILE_NAME=:fileName,FILE_DESC=:file_desc,FILE_CHARSET=:fileCharset,FILE_TYPE=:fileType,DATA_TYPE=:dataType"
+                            +",FTP_ENV_ID=:ftpEnvId,SCHEDULE_MIN=:schMin,SCHEDULE_HOUR=:schHour,SCHEDULE_DAY=:schDay,SCHEDULE_WEEK=:schWeek,SCHEDULE_MONTH=:schMonth"
+                            +",CM_F01=:cm_f01, CM_F02=:cm_f02, UPDATE_USER=:update_user, UPDATE_DATE=:update_date, NODATASEND=:noDataSend WHERE ID=:id")
                                .setParameter("id", fdef.getId())
+                               .setParameter("fileName", fdef.getFileName())
                                .setParameter("file_desc", fdef.getFile_desc())
-                               .setParameter("cron_data", fdef.getCron_data())
-                               .setParameter("extract_type", fdef.getExtract_type())
+                               .setParameter("fileCharset", fdef.getFileCharset())
+                               .setParameter("fileType", fdef.getFileType())
+                               .setParameter("dataType", fdef.getDataType())
+                               .setParameter("ftpEnvId", fdef.getFtpEnvId())
+                               .setParameter("schMin", fdef.getScheduleMin())
+                               .setParameter("schHour", fdef.getScheduleHour())
+                               .setParameter("schDay", fdef.getScheduleDay())
+                               .setParameter("schWeek", fdef.getScheduleWeek())
+                               .setParameter("schMonth", fdef.getScheduleMonth())
                                .setParameter("cm_f01", fdef.getCm_f01())
                                .setParameter("cm_f02", fdef.getCm_f02())
-                               .setParameter("update_date", fdef.getUpdate_user())
+                               .setParameter("update_date", fdef.getUpdate_date())
                                .setParameter("update_user", fdef.getUpdate_user())
+                               .setParameter("noDataSend", fdef.getNoDataSend())
                                .executeUpdate();
     return fdef;
+  }
+
+  @Override
+  public int updateFileDefSendFlag(String id, String flag) {
+
+    int result = getSession().createQuery("UPDATE FROM file_define SET SEND_FLAG = :sendFlag WHERE ID=:id")
+                            .setParameter("sendFlag", flag)
+                            .setParameter("id", id)
+                            .executeUpdate();
+    return result;
   }
 
 }
