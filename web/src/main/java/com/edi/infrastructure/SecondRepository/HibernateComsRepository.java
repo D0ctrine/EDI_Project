@@ -10,6 +10,8 @@ import javax.persistence.Query;
 import javax.persistence.Tuple;
 import javax.persistence.TupleElement;
 
+import com.edi.web.payload.SelectSQLPayload;
+
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,8 +30,18 @@ public class HibernateComsRepository {
     return entityManager.unwrap(Session.class);
   }
 
-  public List<Map<String, Object>> selectQuery(String query) {
-    Query sql = entityManager.createNativeQuery(query, Tuple.class);
+  public List<Map<String, Object>> selectQuery(SelectSQLPayload payload) {
+    Query sql = entityManager.createNativeQuery(payload.getQuery(), Tuple.class);
+    ArrayList<HashMap<String,Object>> list = payload.getItems();
+    if(list!=null && !list.isEmpty()){
+      for(int i=0;i<list.size();i++){
+        HashMap<String,Object> map = list.get(i);
+        // key가 쿼리에 존재한다면
+        if(payload.getQuery().indexOf((":" + map.get("key").toString() + " ")) != -1){
+          sql.setParameter(map.get("key").toString(), map.get("query").toString().trim());
+        }
+      }
+    }
     List<Tuple> lst = sql.getResultList();
     List<Map<String, Object>> result = convertTuplesToMap(lst);
     return result;

@@ -47,11 +47,12 @@ public class HibernateQueryRepository extends HibernateSupport<QuerySetting> imp
 
     for(int i=0;i<querySetting.size();i++){
       QuerySetting qSetting = querySetting.get(i);
-      int result = getSession().createQuery("UPDATE from QuerySetting set key = :key, type = :type, query = :query where id = :id")
+      int result = getSession().createQuery("UPDATE from QuerySetting set key = :key, type = :type, query = :query, dbtype=:dbtype where id = :id")
       .setParameter("id", qSetting.getId())
       .setParameter("key", qSetting.getKey())
       .setParameter("type", qSetting.getType())
       .setParameter("query", qSetting.getQuery())
+      .setParameter("dbtype", qSetting.getDbtype())
       .executeUpdate();
       if(result == 1) qList.add(qSetting);
     }
@@ -64,6 +65,18 @@ public class HibernateQueryRepository extends HibernateSupport<QuerySetting> imp
       +"WHERE ID=(SELECT MAX(ID) FROM QUERY_SETTING WHERE TYPE='Main' AND SETTING_ID=:id)",QuerySetting.class)
                                           .setParameter("id", configId);
     return query.uniqueResult();
+  }
+
+  @Override
+  public List<QuerySetting> getUniqQueryData(String configId,String exConfigId) {
+    Query<QuerySetting> query = getSession().createNativeQuery("SELECT * FROM QUERY_SETTING "
+      +"WHERE 1=1"
+      +"AND TYPE IN ('DB','TEXT') AND SETTING_ID = :id "
+      +"AND KEY NOT IN (SELECT KEY FROM QUERY_SETTING WHERE SETTING_ID = :excfgid AND TYPE IN ('DB','TEXT'))",QuerySetting.class)
+                                          .setParameter("id", configId)
+                                          .setParameter("excfgid", exConfigId);
+
+    return query.getResultList();
   }
 
 }

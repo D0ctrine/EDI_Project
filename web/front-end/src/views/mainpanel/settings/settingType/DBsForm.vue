@@ -64,6 +64,7 @@ import 'codemirror/addon/search/searchcursor.js'
 import 'codemirror/addon/search/search.js'
 import 'codemirror/keymap/emacs.js'
 import settingService from '@/services/settings'
+import configService from '@/services/config'
 import FileSaver from 'file-saver'
 import convert from 'xml-js'
 
@@ -99,7 +100,9 @@ export default {
     settingService.getSQL(this.selected.id).then((returnList) => {
       this.formData.queryText = returnList.MainQuery.query
       this.formData.orginalQueryText = returnList.MainQuery.query
-      this.selectedItemValue = returnList.MainQuery.db_type
+      this.selectedItemValue = returnList.MainQuery.dbtype
+      console.log('returnList')
+      console.log(returnList)
     }).catch(error => {
       this.errorMessage = error.message
       console.log(this.errorMessage)
@@ -142,21 +145,48 @@ export default {
       settingService.getSQL(this.selected.id).then((returnList) => {
         this.formData.queryText = returnList.MainQuery.query
         this.formData.orginalQueryText = returnList.MainQuery.query
-        this.selectedItemValue = returnList.MainQuery.db_type
+        this.selectedItemValue = returnList.MainQuery.dbtype
       }).catch(error => {
         this.errorMessage = error.message
         console.log(this.errorMessage)
       })
     },
     async saveData () {
-      await settingService.saveSQL({ query: this.formData.queryText, type: 'Main', settingId: this.selected.id }).then(() => {
-        alert('Saved!')
-        this.orginalQueryText = this.formData.queryText
+      // 마지막에 Parameter가 있을떄 마지막 공백있는지 확인하고 없으면 넣기
+      await settingService.saveSQL({ query: this.formData.queryText, type: 'Main', settingId: this.selected.id, dbtype: this.selectedItemValue }).then(() => {
+        this.formData.orginalQueryText = this.formData.queryText
+        this.modifiedAlarm = ''
         this.modifiedTime = ''
+        alert('Saved!')
       }).catch(error => { alert(error.message) })
     },
     async showResult () {
-      let result = await settingService.selectSQL({ query: this.formData.queryText, database: this.selectedItemValue })
+      let itemBox = await []
+      let itemQuery = await ''
+      // Common에 있는 Item List 가져오기
+      const elementId = this.selected.parent.parent.children.find(item => item.name === 'common')
+
+      let uniqueItemList = await configService.getItems({ categoryId: elementId.id, exConfigId: this.selected.id }).then(response => {
+        return [...this.settingPropsList.itemList, ...response.itemList]
+      })
+
+      for (const item of uniqueItemList) {
+        if (item.type === 'DB') {
+          console.log(item)
+          itemQuery = await settingService.selectSQL({ query: item.query, database: item.dbtype })
+        }
+        if (itemQuery !== null && itemQuery !== undefined && item.type === 'DB') {
+          await itemBox.push({ key: item.key, query: itemQuery.returnList[0].VALUE })
+        } else if (item.type !== 'DB') {
+          await itemBox.push({ key: item.key, query: item.query })
+        }
+      }
+      await itemBox.sort(function (a, b) { return b.key.length - a.key.length })
+      let changeFileName = this.settingPropsList.fileName
+      for (const item of itemBox) {
+        changeFileName = await changeFileName.replace(new RegExp(':' + item.key, 'g'), item.query)
+      }
+      let result = await settingService.selectSQL({ query: (this.formData.queryText + ' '), database: this.selectedItemValue, items: itemBox })
       const header = await this.settingPropsList.headerList
       const tail = await this.settingPropsList.tailList
       const start = await this.settingPropsList.envList.find(env => env.item === 'start').value
@@ -165,7 +195,6 @@ export default {
       this.content = ''
 
       for (const element of header) {
-        console.log(element)
         if (element.data_type.toString() === 'h_sql') {
           this.content += await settingService.selectSQL({ query: element.value.toString(), database: 'REPORT' }).then((sqlList) => sqlList.returnList[0].VALUE).catch(error => { console.log(error.message) })
         } else {
@@ -215,7 +244,7 @@ export default {
         this.content += '\r\n'
       })
       let blob = await new Blob([this.content], { type: 'text/plain;charset=' + this.settingPropsList.charSet })
-      await FileSaver.saveAs(blob, this.settingPropsList.fileName + '.' + this.settingPropsList.fileType)
+      await FileSaver.saveAs(blob, changeFileName + '.' + this.settingPropsList.fileType)
     }
   }
 

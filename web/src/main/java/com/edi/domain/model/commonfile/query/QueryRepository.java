@@ -30,4 +30,11 @@ public interface QueryRepository {
    * 사용할 쿼리 데이터 신규 저장
    */
   void save(QuerySetting qSetting);
+
+  /**
+   *
+   * @param configId
+   * @return
+   */
+  List<QuerySetting> getUniqQueryData(String configId,String exConfigId);
 }

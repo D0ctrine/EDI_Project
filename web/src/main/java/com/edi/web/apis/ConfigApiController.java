@@ -212,4 +212,14 @@ public class ConfigApiController {
     apiResult.add("ftpList", ftpList);
     return Result.ok(apiResult);
   }
+
+  @GetMapping("/api/config/item")
+  public ResponseEntity<ApiResult> getConfigItem(@RequestParam String categoryId,@RequestParam String exConfigId,
+                                             @CurrentUser SimpleUser currentUser) {
+    List<QuerySetting> itemList = new ArrayList<>();
+    if(categoryId!=null) itemList = queryService.getUniqItemList(categoryId, exConfigId);
+    ApiResult apiResult = ApiResult.blank();
+    apiResult.add("itemList", itemList);
+    return Result.ok(apiResult);
+  }
 }

@@ -48,8 +48,24 @@
     </v-btn>
   </p>
   <grid ref="tuiGrid4" :data="queryProps.data" :columns="queryProps.columns" :options="queryProps.options" width="600"/>
-
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
+    <div class="text-center ma-2">
+      <v-snackbar
+          v-model="snackbar"
+        >
+          {{ alertText }}
+          <template v-slot:action="{ attrs }">
+            <v-btn
+              color="pink"
+              text
+              v-bind="attrs"
+              @click="snackbar = false"
+            >
+              Close
+            </v-btn>
+          </template>
+        </v-snackbar>
+    </div>
   </v-container>
 </v-app>
 </template>
@@ -264,7 +280,32 @@ const queryCols = [
     header: 'Type',
     name: 'type',
     align: 'center',
-    editor: 'text'
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: [
+          { text: 'DB', value: 'DB' },
+          { text: 'Text', value: 'TEXT' }
+        ]
+      }
+    }
+  },
+  {
+    header: 'DB-Type',
+    name: 'dbtype',
+    align: 'center',
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: [
+          { text: 'Coms', value: 'COMS' },
+          { text: 'Report', value: 'REPORT' },
+          { text: 'Mes', value: 'MES' }
+        ]
+      }
+    }
   },
   {
     header: 'Del',
@@ -289,6 +330,8 @@ export default {
   },
   data () {
     return {
+      snackbar: false,
+      alertText: '',
       lineProcess: true,
       envProps: { columns: envCols, options: options },
       mailProps: { columns: mailCols, options: options },
@@ -322,6 +365,7 @@ export default {
       this.$refs.tuiGrid2.invoke('resetData', settingList.emailList)
       this.$refs.tuiGrid3.invoke('resetData', settingList.ftpList)
       this.$refs.tuiGrid4.invoke('resetData', settingList.itemList)
+    }).then(() => {
       this.lineProcess = false
     }).catch(error => {
       this.errorMessage = error.message
@@ -365,10 +409,10 @@ export default {
           itemGrp: itemGrp,
           cg_id: this.selected.id
         }
-        console.log('Config Modified List')
-        console.log(config)
 
         await configService.create(config)
+        console.log('create itemGrp')
+        console.log(itemGrp)
 
         env = this.$refs.tuiGrid1.invoke('getModifiedRows').updatedRows
         email = this.$refs.tuiGrid2.invoke('getModifiedRows').updatedRows
@@ -382,10 +426,10 @@ export default {
           updtItemGrp: itemGrp,
           cg_id: this.selected.id
         }
-        console.log('UpdateConfig List')
-        console.log(updateConfig)
 
         await configService.update(updateConfig)
+        console.log('update itemGrp')
+        console.log(itemGrp)
 
         await configService.config(this.selected.id).then((settingList) => {
           console.log('selected~!!')
@@ -414,6 +458,9 @@ export default {
           this.$refs.tuiGrid2.invoke('resetData', settingList.emailList)
           this.$refs.tuiGrid3.invoke('resetData', settingList.ftpList)
           this.$refs.tuiGrid4.invoke('resetData', settingList.itemList)
+        }).then(() => {
+          this.snackbar = true
+          this.alertText = '데이터가 저장되었습니다!'
         }).catch(error => {
           this.errorMessage = error.message
           console.log(this.errorMessage)

@@ -77,5 +77,14 @@ export default {
         reject(errorParser.parse(error))
       })
     })
+  },
+  getItems (detail) {
+    return new Promise((resolve, reject) => {
+      axios.get('/config/item?categoryId=' + detail.categoryId + '&exConfigId=' + detail.exConfigId).then(({ data }) => {
+        resolve(data)
+      }).catch((error) => {
+        reject(errorParser.parse(error))
+      })
+    })
   }
 }

@@ -39,4 +39,10 @@ public interface QueryService {
    * 메인 쿼리 가져오기
    */
   QuerySetting getMainQuery(String settingId);
+/**
+ *
+ * @param settingId
+ * @return
+ */
+  List<QuerySetting> getUniqItemList(String settingId,String exConfigId);
 }

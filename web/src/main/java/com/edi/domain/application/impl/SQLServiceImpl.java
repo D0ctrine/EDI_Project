@@ -9,6 +9,7 @@ import com.edi.domain.application.SQLService;
 import com.edi.infrastructure.SecondRepository.HibernateComsRepository;
 import com.edi.infrastructure.SecondRepository.HibernateMESRepository;
 import com.edi.infrastructure.SecondRepository.HibernateReportRepository;
+import com.edi.web.payload.SelectSQLPayload;
 
 import org.springframework.stereotype.Service;
 
@@ -25,18 +26,18 @@ public class SQLServiceImpl implements SQLService{
     this.comsRepository = comsRepository;
   }
   @Override
-  public List<Map<String, Object>> getReportQuery(String query) {
-    return reportRepository.selectQuery(query);
+  public List<Map<String, Object>> getReportQuery(SelectSQLPayload payload) {
+    return reportRepository.selectQuery(payload);
   }
 
   @Override
-  public List<Map<String, Object>> getMESQuery(String query) {
-    return mesRepository.selectQuery(query);
+  public List<Map<String, Object>> getMESQuery(SelectSQLPayload payload) {
+    return mesRepository.selectQuery(payload);
   }
 
   @Override
-  public List<Map<String, Object>> getComsQuery(String query) {
-    return comsRepository.selectQuery(query);
+  public List<Map<String, Object>> getComsQuery(SelectSQLPayload payload) {
+    return comsRepository.selectQuery(payload);
   }
 
 }

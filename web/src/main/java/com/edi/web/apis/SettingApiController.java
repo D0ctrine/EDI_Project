@@ -206,15 +206,16 @@ public class SettingApiController {
       return Result.ok(apiResult);
   }
 
+  //쿼리 결과 가져오기
   @PostMapping("/api/setting/sql")
   public ResponseEntity<ApiResult> selectSQL(@RequestBody SelectSQLPayload payload, @CurrentUser SimpleUser currentUser){
     ApiResult apiResult = ApiResult.blank();
     if(payload.getDatabase().equals("REPORT")){
-      apiResult.add("returnList", sqlService.getReportQuery(payload.getQuery()));
+      apiResult.add("returnList", sqlService.getReportQuery(payload));
     }else if(payload.getDatabase().equals("MES")){
-      apiResult.add("returnList", sqlService.getMESQuery(payload.getQuery()));
+      apiResult.add("returnList", sqlService.getMESQuery(payload));
     }else if(payload.getDatabase().equals("COMS")){
-      apiResult.add("returnList", sqlService.getComsQuery(payload.getQuery()));
+      apiResult.add("returnList", sqlService.getComsQuery(payload));
     }
       return Result.ok(apiResult);
   }
@@ -227,6 +228,7 @@ public class SettingApiController {
       return Result.ok(apiResult);
   }
 
+  // 파일 본문 쿼리 가져오기
   @GetMapping("/api/setting/getMainQuery")
   public ResponseEntity<ApiResult> getMainQuery(@RequestParam String categoryId, @CurrentUser SimpleUser currentUser){
       ApiResult apiResult = ApiResult.blank();
@@ -237,6 +239,7 @@ public class SettingApiController {
       return Result.ok(apiResult);
   }
 
+  // 스케줄러 정지 | 실행 기능
   @GetMapping("/api/fileDefine/statusChange")
   public ResponseEntity<ApiResult> fileDefineStatusChange(@RequestParam String fileDefineId,@RequestParam String flag,
                                              @CurrentUser SimpleUser currentUser) {

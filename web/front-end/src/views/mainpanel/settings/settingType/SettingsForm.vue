@@ -9,7 +9,7 @@
           <v-btn color="blue" class="mr-16 white--text" v-on:click="saveData()" style="float: right">
             Save<v-icon right dark> mdi-content-save-all</v-icon>
           </v-btn>
-          <div v-if="this.sendFlag !== 'Y'">
+          <div v-if="this.sendFlag === 'N'">
             <v-icon size="30" color="amber" style="float: left">mdi-pause</v-icon>
           <v-btn color="green" v-on:click="updateCronStatus('Y')" class="mr-4 mb-2 white--text" style="float: right">
             Run<v-icon right dark> mdi-play-circle-outline</v-icon>
@@ -30,10 +30,10 @@
     <v-textarea
       clearable
       clear-icon="mdi-close-circle"
-      label="파일 설명(참조용)"
+      :label="this.selected.name.toUpperCase() + ' 파일 설명(참조용)'"
       rows="2"
       style="font-size: 18px;"
-      placeholder="파일 내용을 간략히 작성하시오."
+      :placeholder="this.selected.name.toUpperCase() + ' 파일 내용을 간략히 작성하시오.'"
       v-model="fileDescription"
       class="pt-0"
     ></v-textarea>
@@ -41,7 +41,7 @@
     <v-spacer style="height: 50px;"></v-spacer>
     <v-row>
         <span class="text-left">
-          <p class="itemHeader"><v-icon size="30">mdi-file-star-outline</v-icon> 파일 저장 방식</p>
+          <p class="itemHeader"><v-icon size="30">mdi-file-star-outline</v-icon>{{ this.selected.name.toUpperCase() }} 파일 저장 방식</p>
         </span>
     </v-row>
     <v-row>
@@ -372,7 +372,7 @@ const headercols4 = [ // query
   },
   {
     header: 'DB-Type',
-    name: 'dbType',
+    name: 'dbtype',
     align: 'center',
     formatter: 'listItemText',
     editor: {
@@ -448,14 +448,10 @@ export default {
       const elementId = this.selected.parent.parent.children.find(item => item.name === 'common')
       configService.getFtp(elementId.id).then(response => {
         this.configFtpList = response.ftpList
-        console.log('this.configFtpList')
-        console.log(this.configFtpList)
       })
       settingService.setting(this.selected.id)
         .then(async response => {
           if (response.filedefList) {
-            console.log('response.filedefList')
-            console.log(response.filedefList)
             this.fileDescriptionID = await response.filedefList.id
             this.fileDescription = await response.filedefList.file_desc
             this.noDataSendFlag = await response.filedefList.noDataSend
@@ -494,6 +490,8 @@ export default {
 
           await response.envList.forEach((element) => { element.gridName = 'envGrid' })
           await response.itemList.forEach((element) => { element.gridName = 'itemGrid' })
+          console.log('response.itemList')
+          console.log(response.itemList)
 
           await this.$refs.envGrid.invoke('resetData', response.envList)
           await this.$refs.itemGrid.invoke('resetData', response.itemList)
@@ -552,7 +550,8 @@ export default {
         tail = await this.$refs.tailGrid.invoke('getModifiedRows').updatedRows
         headNtail = await [ ...head, ...tail ]
         itemGrp = await this.$refs.itemGrid.invoke('getModifiedRows').updatedRows
-
+        console.log('update itemGrp')
+        console.log(itemGrp)
         const updateSetting = await {
           env: env,
           headNtail: headNtail,

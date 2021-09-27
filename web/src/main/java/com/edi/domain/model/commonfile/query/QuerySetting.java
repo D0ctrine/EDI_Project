@@ -44,10 +44,10 @@ public class QuerySetting extends AbstractBaseEntity {
   @Column(name = "create_date")
   private String create_date;
 
-  @Column(name = "db_type")
-  private String db_type;
+  @Column(name = "dbtype")
+  private String dbType;
 
-  public static QuerySetting create(UserId userid,String cfg_id, String key, String type, String query, String db_type){
+  public static QuerySetting create(UserId userid,String cfg_id, String key, String type, String query, String dbType){
     Date date = new Date();
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     String sqldate = formatter.format(date);
@@ -59,7 +59,7 @@ public class QuerySetting extends AbstractBaseEntity {
     querySetting.setKey(key);
     querySetting.setType(type);
     querySetting.setQuery(query);
-    querySetting.setDb_type(db_type);
+    querySetting.setDbtype(dbType);
 
     return querySetting;
   }
@@ -71,14 +71,14 @@ public class QuerySetting extends AbstractBaseEntity {
     querySetting.setKey(key);
     querySetting.setType(type);
     querySetting.setQuery(query);
-    querySetting.setDb_type(db_type);
+    querySetting.setDbtype(db_type);
 
     return querySetting;
   }
 
   @Override
   public String toString() {
-    return "QuerySetting [create_date=" + create_date + ", create_user=" + create_user + ", db_type=" + db_type
+    return "QuerySetting [create_date=" + create_date + ", create_user=" + create_user + ", dbtype=" + dbType
         + ", id=" + id + ", key=" + key + ", query=" + query + ", setting_id=" + setting_id + ", type=" + type + "]";
   }
   @Override
@@ -87,7 +87,7 @@ public class QuerySetting extends AbstractBaseEntity {
     int result = 1;
     result = prime * result + ((create_date == null) ? 0 : create_date.hashCode());
     result = prime * result + ((create_user == null) ? 0 : create_user.hashCode());
-    result = prime * result + ((db_type == null) ? 0 : db_type.hashCode());
+    result = prime * result + ((dbType == null) ? 0 : dbType.hashCode());
     result = prime * result + ((id == null) ? 0 : id.hashCode());
     result = prime * result + ((key == null) ? 0 : key.hashCode());
     result = prime * result + ((query == null) ? 0 : query.hashCode());
@@ -114,10 +114,10 @@ public class QuerySetting extends AbstractBaseEntity {
         return false;
     } else if (!create_user.equals(other.create_user))
       return false;
-    if (db_type == null) {
-      if (other.db_type != null)
+    if (dbType == null) {
+      if (other.dbType != null)
         return false;
-    } else if (!db_type.equals(other.db_type))
+    } else if (!dbType.equals(other.dbType))
       return false;
     if (id == null) {
       if (other.id != null)
@@ -201,11 +201,11 @@ public class QuerySetting extends AbstractBaseEntity {
   public void setCreate_date(String create_date) {
     this.create_date = create_date;
   }
-  public String getDb_type() {
-    return db_type;
+  public String getDbtype() {
+    return dbType;
   }
-  public void setDb_type(String db_type) {
-    this.db_type = db_type;
+  public void setDbtype(String db_type) {
+    this.dbType = db_type;
   }
 
 }
