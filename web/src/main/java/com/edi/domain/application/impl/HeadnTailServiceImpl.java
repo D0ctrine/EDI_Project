@@ -10,6 +10,7 @@ import com.edi.domain.application.commands.setting.headntail.CreateHnTCommand;
 import com.edi.domain.application.commands.setting.headntail.UpdateHnTCommand;
 import com.edi.domain.model.settingfile.headntail.headntail;
 import com.edi.domain.model.settingfile.headntail.hntRepository;
+import com.edi.domain.model.user.UserId;
 
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,20 @@ public class HeadnTailServiceImpl implements HeadnTailService{
       hntList.add(hDef);
     }
     return hntList;
+  }
+
+  @Override
+  public Boolean createCopy(List<headntail> ec, UserId userid, String cfgId) {
+    try {
+      for(int i=0;i<ec.size();i++){
+        headntail hDef = headntail.create(userid, cfgId, ec.get(i).getData_type(), ec.get(i).getNote(), ec.get(i).getValue());
+        hRepository.save(hDef);
+      }
+      return true;
+    } catch (Exception e) {
+      new Error(e.getMessage());
+    }
+    return false;
   }
 
   @Override

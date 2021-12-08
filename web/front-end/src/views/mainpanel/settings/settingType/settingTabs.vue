@@ -14,7 +14,7 @@
       <v-tab-item v-for="i in 2" :key="i" :value="'mobile-tabs-5-' + i">
           <v-scroll-y-transition mode="out-in">
           <v-card class="mt-6 mx-auto" flat>
-              <SettingsForm v-if="i == 1" ref="settings" v-bind:selected='selectedList' />
+              <SettingsForm v-if="i == 1" ref="settings" v-bind:selected='selectedList' @refreshCategory="callCategory" />
             <v-card-text v-if="i == 2">
               <DBsForm style="" v-bind:selected='selectedList' v-bind:settingPropsList='settingList'/>
             </v-card-text>
@@ -47,6 +47,9 @@ export default {
     getDataToDBcomponent: async function () {
       this.settingList = await this.$refs.settings[0].sendDataToDBcomponent()
       return this.settingList
+    },
+    callCategory: async function () {
+      this.$emit('callCategory', true)
     }
   }
 }

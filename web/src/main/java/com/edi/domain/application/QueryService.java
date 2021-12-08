@@ -5,6 +5,7 @@ import java.util.List;
 import com.edi.domain.application.commands.config.query.CreateQueryCommand;
 import com.edi.domain.application.commands.config.query.UpdateQueryCommand;
 import com.edi.domain.model.commonfile.query.QuerySetting;
+import com.edi.domain.model.user.UserId;
 
 public interface QueryService {
     /**
@@ -22,7 +23,15 @@ public interface QueryService {
    */
   List<QuerySetting> create(List<CreateQueryCommand> qc);
 
+  /**
+   * Create Copy
+   * @return true or false
+   */
+  Boolean createCopy(List<QuerySetting> qc, UserId userid, String configId);
+
   QuerySetting createMainQuery(CreateQueryCommand qc);
+
+  QuerySetting copyMainQuery(UserId userid, String settingId, String key, String type, String query, String dbType);
 
   /**
    * 카테고리 삭제

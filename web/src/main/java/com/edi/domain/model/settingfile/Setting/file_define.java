@@ -15,7 +15,7 @@ import com.edi.domain.common.model.AbstractBaseEntity;
 import com.edi.domain.model.user.UserId;
 
 @Entity
-@Table(name = "file_define")
+@Table(name = "EDI_FILE_DEFINE")
 public class file_define extends AbstractBaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EDI_FDEF_SEQUENCE")
@@ -31,6 +31,9 @@ public class file_define extends AbstractBaseEntity {
   @Column(name = "file_desc")
   private String file_desc;
 
+  @Column(name = "file_save_folder")
+  private String fileSaveFolder;
+
   @Column(name = "file_charset")
   private String fileCharset;
 
@@ -42,6 +45,12 @@ public class file_define extends AbstractBaseEntity {
 
   @Column(name = "ftp_env_id")
   private String ftpEnvId;
+
+  @Column(name = "send_flag")
+  private String send_flag;
+
+  @Column(name = "nodatasend")
+  private String noDataSend;
 
   @Column(name = "schedule_min")
   private String scheduleMin;
@@ -82,13 +91,7 @@ public class file_define extends AbstractBaseEntity {
   @Column(name = "delete_date")
   private String delete_date;
 
-  @Column(name = "nodatasend")
-  private String noDataSend;
-
-  @Column(name = "send_flag")
-  private String send_flag;
-
-  public static file_define create(UserId userid, String cfg_id, String fileName, String file_desc, String fileCharset, String dataType
+  public static file_define create(UserId userid, String cfg_id, String fileName, String file_desc, String fileSaveFolder, String fileCharset, String dataType
                                   , String fileType, String ftpEnvId,String scheduleMin, String scheduleHour, String scheduleDay
                                   , String scheduleWeek, String scheduleMonth,String noDataSend,String send_flag) {
     Date date = new Date();
@@ -99,6 +102,7 @@ public class file_define extends AbstractBaseEntity {
     fDefine.setCfg_id(cfg_id);
     fDefine.setFileName(fileName);
     fDefine.setFile_desc(file_desc);
+    fDefine.setFileSaveFolder(fileSaveFolder);
     fDefine.setFileCharset(fileCharset);
     fDefine.setDataType(dataType);
     fDefine.setFileType(fileType);
@@ -115,7 +119,7 @@ public class file_define extends AbstractBaseEntity {
     return fDefine;
   }
 
-  public static file_define update(Long id, UserId userid, String cfg_id, String fileName, String file_desc, String fileCharset, String dataType
+  public static file_define update(Long id, UserId userid, String cfg_id, String fileName, String file_desc, String fileSaveFolder, String fileCharset, String dataType
                                   , String fileType, String ftpEnvId,String scheduleMin, String scheduleHour, String scheduleDay
                                   , String scheduleWeek, String scheduleMonth,String noDataSend) {
     Date date = new Date();
@@ -127,6 +131,7 @@ public class file_define extends AbstractBaseEntity {
     fDefine.setCfg_id(cfg_id);
     fDefine.setFileName(fileName);
     fDefine.setFile_desc(file_desc);
+    fDefine.setFileSaveFolder(fileSaveFolder);
     fDefine.setFileCharset(fileCharset);
     fDefine.setDataType(dataType);
     fDefine.setFileType(fileType);
@@ -141,168 +146,6 @@ public class file_define extends AbstractBaseEntity {
     fDefine.setNoDataSend(noDataSend);
 
     return fDefine;
-  }
-
-  @Override
-  public String toString() {
-    return "file_define [cfg_id=" + cfg_id + ", cm_f01=" + cm_f01 + ", cm_f02=" + cm_f02 + ", create_date="
-        + create_date + ", create_user=" + create_user + ", dataType=" + dataType + ", delete_date=" + delete_date
-        + ", delete_user=" + delete_user + ", fileCharset=" + fileCharset + ", fileName=" + fileName + ", fileType="
-        + fileType + ", file_desc=" + file_desc + ", ftpEnvId=" + ftpEnvId + ", id=" + id + ", noDataSend=" + noDataSend
-        + ", scheduleDay=" + scheduleDay + ", scheduleHour=" + scheduleHour + ", scheduleMin=" + scheduleMin
-        + ", scheduleMonth=" + scheduleMonth + ", scheduleWeek=" + scheduleWeek + ", update_date=" + update_date
-        + ", update_user=" + update_user + "]";
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((cfg_id == null) ? 0 : cfg_id.hashCode());
-    result = prime * result + ((cm_f01 == null) ? 0 : cm_f01.hashCode());
-    result = prime * result + ((cm_f02 == null) ? 0 : cm_f02.hashCode());
-    result = prime * result + ((create_date == null) ? 0 : create_date.hashCode());
-    result = prime * result + ((create_user == null) ? 0 : create_user.hashCode());
-    result = prime * result + ((dataType == null) ? 0 : dataType.hashCode());
-    result = prime * result + ((delete_date == null) ? 0 : delete_date.hashCode());
-    result = prime * result + ((delete_user == null) ? 0 : delete_user.hashCode());
-    result = prime * result + ((fileCharset == null) ? 0 : fileCharset.hashCode());
-    result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
-    result = prime * result + ((fileType == null) ? 0 : fileType.hashCode());
-    result = prime * result + ((file_desc == null) ? 0 : file_desc.hashCode());
-    result = prime * result + ((ftpEnvId == null) ? 0 : ftpEnvId.hashCode());
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
-    result = prime * result + ((noDataSend == null) ? 0 : noDataSend.hashCode());
-    result = prime * result + ((scheduleDay == null) ? 0 : scheduleDay.hashCode());
-    result = prime * result + ((scheduleHour == null) ? 0 : scheduleHour.hashCode());
-    result = prime * result + ((scheduleMin == null) ? 0 : scheduleMin.hashCode());
-    result = prime * result + ((scheduleMonth == null) ? 0 : scheduleMonth.hashCode());
-    result = prime * result + ((scheduleWeek == null) ? 0 : scheduleWeek.hashCode());
-    result = prime * result + ((update_date == null) ? 0 : update_date.hashCode());
-    result = prime * result + ((update_user == null) ? 0 : update_user.hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    file_define other = (file_define) obj;
-    if (cfg_id == null) {
-      if (other.cfg_id != null)
-        return false;
-    } else if (!cfg_id.equals(other.cfg_id))
-      return false;
-    if (cm_f01 == null) {
-      if (other.cm_f01 != null)
-        return false;
-    } else if (!cm_f01.equals(other.cm_f01))
-      return false;
-    if (cm_f02 == null) {
-      if (other.cm_f02 != null)
-        return false;
-    } else if (!cm_f02.equals(other.cm_f02))
-      return false;
-    if (create_date == null) {
-      if (other.create_date != null)
-        return false;
-    } else if (!create_date.equals(other.create_date))
-      return false;
-    if (create_user == null) {
-      if (other.create_user != null)
-        return false;
-    } else if (!create_user.equals(other.create_user))
-      return false;
-    if (dataType == null) {
-      if (other.dataType != null)
-        return false;
-    } else if (!dataType.equals(other.dataType))
-      return false;
-    if (delete_date == null) {
-      if (other.delete_date != null)
-        return false;
-    } else if (!delete_date.equals(other.delete_date))
-      return false;
-    if (delete_user == null) {
-      if (other.delete_user != null)
-        return false;
-    } else if (!delete_user.equals(other.delete_user))
-      return false;
-    if (fileCharset == null) {
-      if (other.fileCharset != null)
-        return false;
-    } else if (!fileCharset.equals(other.fileCharset))
-      return false;
-    if (fileName == null) {
-      if (other.fileName != null)
-        return false;
-    } else if (!fileName.equals(other.fileName))
-      return false;
-    if (fileType == null) {
-      if (other.fileType != null)
-        return false;
-    } else if (!fileType.equals(other.fileType))
-      return false;
-    if (file_desc == null) {
-      if (other.file_desc != null)
-        return false;
-    } else if (!file_desc.equals(other.file_desc))
-      return false;
-    if (ftpEnvId == null) {
-      if (other.ftpEnvId != null)
-        return false;
-    } else if (!ftpEnvId.equals(other.ftpEnvId))
-      return false;
-    if (id == null) {
-      if (other.id != null)
-        return false;
-    } else if (!id.equals(other.id))
-      return false;
-    if (noDataSend == null) {
-      if (other.noDataSend != null)
-        return false;
-    } else if (!noDataSend.equals(other.noDataSend))
-      return false;
-    if (scheduleDay == null) {
-      if (other.scheduleDay != null)
-        return false;
-    } else if (!scheduleDay.equals(other.scheduleDay))
-      return false;
-    if (scheduleHour == null) {
-      if (other.scheduleHour != null)
-        return false;
-    } else if (!scheduleHour.equals(other.scheduleHour))
-      return false;
-    if (scheduleMin == null) {
-      if (other.scheduleMin != null)
-        return false;
-    } else if (!scheduleMin.equals(other.scheduleMin))
-      return false;
-    if (scheduleMonth == null) {
-      if (other.scheduleMonth != null)
-        return false;
-    } else if (!scheduleMonth.equals(other.scheduleMonth))
-      return false;
-    if (scheduleWeek == null) {
-      if (other.scheduleWeek != null)
-        return false;
-    } else if (!scheduleWeek.equals(other.scheduleWeek))
-      return false;
-    if (update_date == null) {
-      if (other.update_date != null)
-        return false;
-    } else if (!update_date.equals(other.update_date))
-      return false;
-    if (update_user == null) {
-      if (other.update_user != null)
-        return false;
-    } else if (!update_user.equals(other.update_user))
-      return false;
-    return true;
   }
 
   public Long getId() {
@@ -337,6 +180,14 @@ public class file_define extends AbstractBaseEntity {
     this.file_desc = file_desc;
   }
 
+  public String getFileSaveFolder() {
+    return fileSaveFolder;
+  }
+
+  public void setFileSaveFolder(String fileSaveFolder) {
+    this.fileSaveFolder = fileSaveFolder;
+  }
+
   public String getFileCharset() {
     return fileCharset;
   }
@@ -367,6 +218,22 @@ public class file_define extends AbstractBaseEntity {
 
   public void setFtpEnvId(String ftpEnvId) {
     this.ftpEnvId = ftpEnvId;
+  }
+
+  public String getSend_flag() {
+    return send_flag;
+  }
+
+  public void setSend_flag(String send_flag) {
+    this.send_flag = send_flag;
+  }
+
+  public String getNoDataSend() {
+    return noDataSend;
+  }
+
+  public void setNoDataSend(String noDataSend) {
+    this.noDataSend = noDataSend;
   }
 
   public String getScheduleMin() {
@@ -473,21 +340,179 @@ public class file_define extends AbstractBaseEntity {
     this.delete_date = delete_date;
   }
 
-  public String getNoDataSend() {
-    return noDataSend;
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((cfg_id == null) ? 0 : cfg_id.hashCode());
+    result = prime * result + ((cm_f01 == null) ? 0 : cm_f01.hashCode());
+    result = prime * result + ((cm_f02 == null) ? 0 : cm_f02.hashCode());
+    result = prime * result + ((create_date == null) ? 0 : create_date.hashCode());
+    result = prime * result + ((create_user == null) ? 0 : create_user.hashCode());
+    result = prime * result + ((dataType == null) ? 0 : dataType.hashCode());
+    result = prime * result + ((delete_date == null) ? 0 : delete_date.hashCode());
+    result = prime * result + ((delete_user == null) ? 0 : delete_user.hashCode());
+    result = prime * result + ((fileCharset == null) ? 0 : fileCharset.hashCode());
+    result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
+    result = prime * result + ((fileSaveFolder == null) ? 0 : fileSaveFolder.hashCode());
+    result = prime * result + ((fileType == null) ? 0 : fileType.hashCode());
+    result = prime * result + ((file_desc == null) ? 0 : file_desc.hashCode());
+    result = prime * result + ((ftpEnvId == null) ? 0 : ftpEnvId.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((noDataSend == null) ? 0 : noDataSend.hashCode());
+    result = prime * result + ((scheduleDay == null) ? 0 : scheduleDay.hashCode());
+    result = prime * result + ((scheduleHour == null) ? 0 : scheduleHour.hashCode());
+    result = prime * result + ((scheduleMin == null) ? 0 : scheduleMin.hashCode());
+    result = prime * result + ((scheduleMonth == null) ? 0 : scheduleMonth.hashCode());
+    result = prime * result + ((scheduleWeek == null) ? 0 : scheduleWeek.hashCode());
+    result = prime * result + ((send_flag == null) ? 0 : send_flag.hashCode());
+    result = prime * result + ((update_date == null) ? 0 : update_date.hashCode());
+    result = prime * result + ((update_user == null) ? 0 : update_user.hashCode());
+    return result;
   }
 
-  public void setNoDataSend(String noDataSend) {
-    this.noDataSend = noDataSend;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    file_define other = (file_define) obj;
+    if (cfg_id == null) {
+      if (other.cfg_id != null)
+        return false;
+    } else if (!cfg_id.equals(other.cfg_id))
+      return false;
+    if (cm_f01 == null) {
+      if (other.cm_f01 != null)
+        return false;
+    } else if (!cm_f01.equals(other.cm_f01))
+      return false;
+    if (cm_f02 == null) {
+      if (other.cm_f02 != null)
+        return false;
+    } else if (!cm_f02.equals(other.cm_f02))
+      return false;
+    if (create_date == null) {
+      if (other.create_date != null)
+        return false;
+    } else if (!create_date.equals(other.create_date))
+      return false;
+    if (create_user == null) {
+      if (other.create_user != null)
+        return false;
+    } else if (!create_user.equals(other.create_user))
+      return false;
+    if (dataType == null) {
+      if (other.dataType != null)
+        return false;
+    } else if (!dataType.equals(other.dataType))
+      return false;
+    if (delete_date == null) {
+      if (other.delete_date != null)
+        return false;
+    } else if (!delete_date.equals(other.delete_date))
+      return false;
+    if (delete_user == null) {
+      if (other.delete_user != null)
+        return false;
+    } else if (!delete_user.equals(other.delete_user))
+      return false;
+    if (fileCharset == null) {
+      if (other.fileCharset != null)
+        return false;
+    } else if (!fileCharset.equals(other.fileCharset))
+      return false;
+    if (fileName == null) {
+      if (other.fileName != null)
+        return false;
+    } else if (!fileName.equals(other.fileName))
+      return false;
+    if (fileSaveFolder == null) {
+      if (other.fileSaveFolder != null)
+        return false;
+    } else if (!fileSaveFolder.equals(other.fileSaveFolder))
+      return false;
+    if (fileType == null) {
+      if (other.fileType != null)
+        return false;
+    } else if (!fileType.equals(other.fileType))
+      return false;
+    if (file_desc == null) {
+      if (other.file_desc != null)
+        return false;
+    } else if (!file_desc.equals(other.file_desc))
+      return false;
+    if (ftpEnvId == null) {
+      if (other.ftpEnvId != null)
+        return false;
+    } else if (!ftpEnvId.equals(other.ftpEnvId))
+      return false;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    if (noDataSend == null) {
+      if (other.noDataSend != null)
+        return false;
+    } else if (!noDataSend.equals(other.noDataSend))
+      return false;
+    if (scheduleDay == null) {
+      if (other.scheduleDay != null)
+        return false;
+    } else if (!scheduleDay.equals(other.scheduleDay))
+      return false;
+    if (scheduleHour == null) {
+      if (other.scheduleHour != null)
+        return false;
+    } else if (!scheduleHour.equals(other.scheduleHour))
+      return false;
+    if (scheduleMin == null) {
+      if (other.scheduleMin != null)
+        return false;
+    } else if (!scheduleMin.equals(other.scheduleMin))
+      return false;
+    if (scheduleMonth == null) {
+      if (other.scheduleMonth != null)
+        return false;
+    } else if (!scheduleMonth.equals(other.scheduleMonth))
+      return false;
+    if (scheduleWeek == null) {
+      if (other.scheduleWeek != null)
+        return false;
+    } else if (!scheduleWeek.equals(other.scheduleWeek))
+      return false;
+    if (send_flag == null) {
+      if (other.send_flag != null)
+        return false;
+    } else if (!send_flag.equals(other.send_flag))
+      return false;
+    if (update_date == null) {
+      if (other.update_date != null)
+        return false;
+    } else if (!update_date.equals(other.update_date))
+      return false;
+    if (update_user == null) {
+      if (other.update_user != null)
+        return false;
+    } else if (!update_user.equals(other.update_user))
+      return false;
+    return true;
   }
 
-  public String getSend_flag() {
-    return send_flag;
+  @Override
+  public String toString() {
+    return "file_define [cfg_id=" + cfg_id + ", cm_f01=" + cm_f01 + ", cm_f02=" + cm_f02 + ", create_date="
+        + create_date + ", create_user=" + create_user + ", dataType=" + dataType + ", delete_date=" + delete_date
+        + ", delete_user=" + delete_user + ", fileCharset=" + fileCharset + ", fileName=" + fileName
+        + ", fileSaveFolder=" + fileSaveFolder + ", fileType=" + fileType + ", file_desc=" + file_desc + ", ftpEnvId="
+        + ftpEnvId + ", id=" + id + ", noDataSend=" + noDataSend + ", scheduleDay=" + scheduleDay + ", scheduleHour="
+        + scheduleHour + ", scheduleMin=" + scheduleMin + ", scheduleMonth=" + scheduleMonth + ", scheduleWeek="
+        + scheduleWeek + ", send_flag=" + send_flag + ", update_date=" + update_date + ", update_user=" + update_user
+        + "]";
   }
-
-  public void setSend_flag(String send_flag) {
-    this.send_flag = send_flag;
-  }
-
 
 }

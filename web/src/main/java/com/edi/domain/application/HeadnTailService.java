@@ -5,6 +5,7 @@ import java.util.List;
 import com.edi.domain.application.commands.setting.headntail.CreateHnTCommand;
 import com.edi.domain.application.commands.setting.headntail.UpdateHnTCommand;
 import com.edi.domain.model.settingfile.headntail.headntail;
+import com.edi.domain.model.user.UserId;
 
 public interface HeadnTailService {
     /**
@@ -16,6 +17,11 @@ public interface HeadnTailService {
    * 메일 세팅 신규 생성
    */
   List<headntail> create(List<CreateHnTCommand> ec);
+
+/**
+   * 메일 세팅 복사본 생성
+   */
+  Boolean createCopy(List<headntail> ec, UserId userid, String cfgId);
 
   /**
    * 파일 세팅 삭제

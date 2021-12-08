@@ -103,5 +103,32 @@ export default {
         reject(errorParser.parse(error))
       })
     })
+  },
+  setDaemonFileSave (detail) {
+    return new Promise((resolve, reject) => {
+      axios.get('http://12.230.58.89:3000/makeFile/FILE/' + detail).then(({ data }) => {
+        resolve(data)
+      }).catch((error) => {
+        console.log(error)
+      })
+    })
+  },
+  setDaemonSendFtp (detail) {
+    return new Promise((resolve, reject) => {
+      axios.get('http://12.230.58.89:3000/makeFile/FTP/' + detail).then(({ data }) => {
+        resolve(data)
+      }).catch((error) => {
+        console.log(error)
+      })
+    })
+  },
+  copySetting (detail) {
+    return new Promise((resolve, reject) => {
+      axios.get('/copySetting?categoryId=' + detail).then(({ data }) => {
+        resolve(data)
+      }).catch((error) => {
+        reject(errorParser.parse(error))
+      })
+    })
   }
 }

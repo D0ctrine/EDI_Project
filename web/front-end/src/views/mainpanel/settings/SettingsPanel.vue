@@ -21,6 +21,7 @@
         label="Case sensitive search"
       ></v-checkbox>
     </v-sheet>
+      <v-progress-linear indeterminate v-if="this.lineProcess" color="yellow darken-1"></v-progress-linear>
   <v-btn color="blue-grey" class="ma-2 white--text" @click="addNode">
       Add Folder
       <v-icon right>
@@ -62,7 +63,7 @@
           </div>
           <v-container v-if="selected">
             <configFile v-bind:selected='selected' v-if="selected.file_type === 'COG'"/>
-            <settingTabs v-bind:selected='selected' v-if="selected.file_type === 'TXT'"/>
+            <settingTabs v-bind:selected='selected' v-if="selected.file_type === 'TXT'" @callCategory="refreshCategory"/>
           </v-container>
       </v-col>
     </v-row>
@@ -83,63 +84,69 @@ export default {
     data: new Tree([{ name: 'No Data', id: '0', disabled: true, depth: '2', file_type: 'file' }]),
     open: [],
     search: null,
+    lineProcess: false,
     caseSensitive: false
   }),
   created () {
-    categoryService.categories().then(data => {
-      const list = data.categories
-      if (list && list.length > 0) {
-        const oneDepth = []
-        const twoDepth = []
-        const threeDepth = []
-
-        for (let i = 0; i < list.length; i++) {
-          list[i].pid = list[i].parent
-          list[i].dragDisabled = true
-          if (list[i].file_type === 'folder') list[i].isLeaf = false
-          else list[i].isLeaf = true
-
-          if (list[i].depth === '1') {
-            list[i].children = []
-            oneDepth.push(list[i])
-          } else if (list[i].depth === '2') {
-            list[i].children = []
-            twoDepth.push(list[i])
-          } else if (list[i].depth === '3') {
-            list[i].addTreeNodeDisabled = true
-            list[i].addLeafNodeDisabled = true
-            threeDepth.push(list[i])
-          }
-        }
-        for (let i = 0; i < twoDepth.length; i++) {
-          for (let j = 0; j < threeDepth.length; j++) {
-            if (String(twoDepth[i].id) === threeDepth[j].parent) {
-              twoDepth[i].children.push(threeDepth[j])
-            }
-          }
-        }
-        for (let i = 0; i < oneDepth.length; i++) {
-          for (let j = 0; j < twoDepth.length; j++) {
-            if (String(oneDepth[i].id) === twoDepth[j].parent) {
-              oneDepth[i].children.push(twoDepth[j])
-            }
-          }
-        }
-        this.data = new Tree(oneDepth)
-      }
-    })
+    this.searchTree()
   },
   components: {
     settingTabs, configFile, VueTreeList
   },
   methods: {
+    searchTree () {
+      this.lineProcess = true
+      categoryService.categories().then(data => {
+        const list = data.categories
+        if (list && list.length > 0) {
+          const oneDepth = []
+          const twoDepth = []
+          const threeDepth = []
+
+          for (let i = 0; i < list.length; i++) {
+            list[i].pid = list[i].parent
+            list[i].dragDisabled = true
+            if (list[i].file_type === 'folder') list[i].isLeaf = false
+            else list[i].isLeaf = true
+
+            if (list[i].depth === '1') {
+              list[i].children = []
+              oneDepth.push(list[i])
+            } else if (list[i].depth === '2') {
+              list[i].children = []
+              twoDepth.push(list[i])
+            } else if (list[i].depth === '3') {
+              list[i].addTreeNodeDisabled = true
+              list[i].addLeafNodeDisabled = true
+              threeDepth.push(list[i])
+            }
+          }
+          for (let i = 0; i < twoDepth.length; i++) {
+            for (let j = 0; j < threeDepth.length; j++) {
+              if (String(twoDepth[i].id) === threeDepth[j].parent) {
+                twoDepth[i].children.push(threeDepth[j])
+              }
+            }
+          }
+          for (let i = 0; i < oneDepth.length; i++) {
+            for (let j = 0; j < twoDepth.length; j++) {
+              if (String(oneDepth[i].id) === twoDepth[j].parent) {
+                oneDepth[i].children.push(twoDepth[j])
+              }
+            }
+          }
+          this.data = new Tree(oneDepth)
+        }
+        this.lineProcess = false
+      })
+    },
     onDel (node) {
       const category = JSON.parse(node)
       if (confirm('삭제하시겠습니까?(복원 가능)')) {
         categoryService.delete(category).then((deletedCategory) => {
           console.log(deletedCategory)
           node.remove()
-          this.$store.dispatch('deleteCategory', deletedCategory)
+          this.searchTree()
           this.close()
         }).catch(error => {
           this.errorMessage = error.message
@@ -151,7 +158,7 @@ export default {
       if (category.eventType === 'blur') {
         categoryService.update(category).then((updatedCategory) => {
           console.log(updatedCategory)
-          this.$store.dispatch('updateCategory', updatedCategory)
+          this.searchTree()
           this.close()
         }).catch(error => {
           this.errorMessage = error.message
@@ -207,11 +214,14 @@ export default {
         nodedata.id = createdCategory.id
         var node = new TreeNode(nodedata)
         this.data.addChildren(node)
-        this.$store.dispatch('addCategory', createdCategory)
         this.close()
       }).catch(error => {
         this.errorMessage = error.message
       })
+    },
+    refreshCategory () {
+      console.log('searchTree!@')
+      this.searchTree()
     }
   },
   computed: {

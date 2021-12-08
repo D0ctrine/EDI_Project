@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="300 seconds" debug="true">
+    <property name="rfiddaemon.log.dir" value="./logs"/>
+    <!--<property name="rfiddaemon.log.dir" value="D:/testlogs/"/>-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5}.%method:%line - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SERVICE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${rfiddaemon.log.dir}/service.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${rfiddaemon.log.dir}/service/service-%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %class{50}.%method:%line %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="EIS_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${rfiddaemon.log.dir}/eis.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${rfiddaemon.log.dir}/eis/eis-%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %class{50}.%method:%line %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${rfiddaemon.log.dir}/debug.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${rfiddaemon.log.dir}/debug/debug-%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %class{50}.%method:%line %msg%n</pattern>
+        </encoder>
+    </appender>
+
+<!--    <appender name="APPLICATION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${rfiddaemon.log.dir}/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${rfiddaemon.log.dir}/application/application-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %class{50}.%method:%line %msg%n</pattern>
+        </encoder>
+    </appender>-->
+
+<!--    <appender name="EQUIPMENT_FILE" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>equipmentName</key>
+            <defaultValue>etc</defaultValue>
+        </discriminator>
+        <sift>
+            <appender name="ROLLING_ROOT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${rfiddaemon.log.dir}/equipment/${equipmentName}/${equipmentName}.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>
+                        ${rfiddaemon.log.dir}/equipment/${equipmentName}/${equipmentName}-%d{yyyy-MM-dd}.log
+                    </fileNamePattern>
+                    &lt;!&ndash;<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">&ndash;&gt;
+                    &lt;!&ndash; or whenever the file size reaches 100MB &ndash;&gt;
+                    &lt;!&ndash;<maxFileSize>50MB</maxFileSize>&ndash;&gt;
+                    &lt;!&ndash; kb, mb, gb &ndash;&gt;
+                    &lt;!&ndash;</timeBasedFileNamingAndTriggeringPolicy>&ndash;&gt;
+                    <maxHistory>30</maxHistory>
+                </rollingPolicy>
+                <encoder>
+                    <charset>UTF-8</charset>
+                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %class{50}.%method:%line %msg%n</pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>-->
+
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${rfiddaemon.log.dir}/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${rfiddaemon.log.dir}/error/error-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %class{50}.%method:%line %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- 비동기 어팬더 -->
+    <appender name="ASYNC_SERVICE_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>25000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="SERVICE_FILE"/>
+    </appender>
+
+    <appender name="ASYNC_EIS_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>25000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="EIS_FILE"/>
+    </appender>
+
+    <appender name="ASYNC_DEBUG_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>25000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="DEBUG_FILE"/>
+    </appender>
+
+<!--    <appender name="ASYNC_APPLICATION_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>25000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="APPLICATION_FILE"/>
+    </appender>-->
+
+    <appender name="ASYNC_ERROR_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>25000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="ERROR_FILE"/>
+    </appender>
+
+<!--
+    <appender name="ASYNC_EQUIPMENT_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>25000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="EQUIPMENT_FILE"/>
+    </appender>
+-->
+
+
+    <!-- ==================================================================== -->
+    <!-- # Service Loggers  -->
+    <!-- ==================================================================== -->
+    <!-- 서비스(업무)레벨로그 -->
+    <logger name="kr.co.nexmore.rfiddaemon" additivity="false" level="DEBUG">
+        <appender-ref ref="ASYNC_SERVICE_FILE"/>
+        <appender-ref ref="ASYNC_DEBUG_FILE"/>
+        <appender-ref ref="ASYNC_ERROR_FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="kr.co.nexmore.rfiddaemon.mes" additivity="true" level="DEBUG">
+        <appender-ref ref="ASYNC_EIS_FILE" />
+    </logger>
+
+
+    <!-- ==================================================================== -->
+    <!-- # Root Loggers  -->
+    <!-- ==================================================================== -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

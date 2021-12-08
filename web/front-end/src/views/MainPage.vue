@@ -1,6 +1,6 @@
 <template>
 <v-app>
-  <v-navigation-drawer app v-model="drawer" style="background-color: RGB(241, 196, 15);">
+  <v-navigation-drawer app v-model="drawer" :width="180" style="background-color: RGB(241, 196, 15);">
     <v-list-item>
         <v-list-item-content>
           <v-list-item-title>
@@ -12,7 +12,7 @@
       <v-list dense nav>
           <v-list-item v-for="(item, i) in items" :key="i" :to="{ name: item.link }" link>
           <v-list-item-icon>
-            <v-icon size="32" class="ml-5">{{item.icon}}</v-icon>
+            <v-icon size="32" class="ml-1">{{item.icon}}</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title style="font-size: 15px;font: bolder;font-weight: bolder;">{{item.text}}</v-list-item-title>

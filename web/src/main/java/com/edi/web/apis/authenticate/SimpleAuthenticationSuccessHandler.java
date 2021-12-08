@@ -16,6 +16,7 @@ public class SimpleAuthenticationSuccessHandler implements AuthenticationSuccess
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                       Authentication authentication) throws IOException {
     response.setStatus(HttpStatus.OK.value());
+    request.getSession().setMaxInactiveInterval(60*60);
     JsonUtils.write(response.getWriter(), ApiResult.message("authenticated"));
   }
 }

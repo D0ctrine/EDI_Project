@@ -8,6 +8,7 @@ public class UpdateFileDefPayload {
   private String cfgId;
   private String fileName;
   private String fileDesc;
+  private String fileSaveFolder;
   private String fileCharset;
   private String dataType;
   private String fileType;
@@ -21,7 +22,7 @@ public class UpdateFileDefPayload {
 
 
   public UpdateFileDefCommand toCommand(UserId userId){
-    return new UpdateFileDefCommand(id, userId, cfgId, fileName, fileDesc, fileCharset, dataType, fileType, ftpEnvid, schMin, schHour, schDay, schWeek, schMonth, noDataSend);
+    return new UpdateFileDefCommand(id, userId, cfgId, fileName, fileDesc, fileSaveFolder, fileCharset, dataType, fileType, ftpEnvid, schMin, schHour, schDay, schWeek, schMonth, noDataSend);
   }
 
   public Long getId() {
@@ -79,6 +80,10 @@ public class UpdateFileDefPayload {
 
   public String getNoDataSend() {
     return noDataSend;
+  }
+
+  public String getFileSaveFolder() {
+    return fileSaveFolder;
   }
 
   public void setCfgId(String cfgId) {

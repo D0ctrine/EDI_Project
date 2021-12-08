@@ -7,6 +7,7 @@ public class CreateFileDefCommand {
   private String cfgId;
   private String fileName;
   private String description;
+  private String fileSaveFolder;
   private String fileCharset;
   private String dataType;
   private String fileType;
@@ -19,12 +20,13 @@ public class CreateFileDefCommand {
   private String noDataSend;
   private String sendFlag;
 
-public CreateFileDefCommand(UserId userId, String cfgId, String fileName, String description, String fileCharset, String dataType
+public CreateFileDefCommand(UserId userId, String cfgId, String fileName, String description, String fileSaveFolder, String fileCharset, String dataType
                             ,String fileType, String ftpEnvid, String schMin, String schHour, String schDay, String schWeek, String schMonth,String noDataSend,String sendFlag){
   this.userId = userId;
   this.cfgId = cfgId;
   this.fileName = fileName;
   this.description = description;
+  this.fileSaveFolder = fileSaveFolder;
   this.fileCharset = fileCharset;
   this.dataType = dataType;
   this.fileType = fileType;
@@ -96,6 +98,10 @@ public String getNoDataSend() {
 
 public String getSendFlag() {
   return sendFlag;
+}
+
+public String getFileSaveFolder() {
+  return fileSaveFolder;
 }
 
 }

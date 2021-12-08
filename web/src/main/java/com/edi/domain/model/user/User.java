@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
   initialValue = 1,
   allocationSize=1
 )
-@Table(name = "edi_user")
+@Table(name = "EDI_USER")
 public class User extends AbstractBaseEntity {
 
   //private static final long serialVersionUID = -538781580460070724L;

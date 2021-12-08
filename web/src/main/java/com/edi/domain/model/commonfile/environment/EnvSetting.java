@@ -15,7 +15,7 @@ import com.edi.domain.common.model.AbstractBaseEntity;
 import com.edi.domain.model.user.UserId;
 
 @Entity
-@Table(name = "env_setting")
+@Table(name = "EDI_ENV_SETTING")
 public class EnvSetting extends AbstractBaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "EDI_ENV_SEQUENCE")

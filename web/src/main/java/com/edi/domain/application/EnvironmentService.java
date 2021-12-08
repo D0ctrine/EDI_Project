@@ -5,6 +5,7 @@ import java.util.List;
 import com.edi.domain.application.commands.config.environment.CreateEnvCommand;
 import com.edi.domain.application.commands.config.environment.UpdateEnvCommand;
 import com.edi.domain.model.commonfile.environment.EnvSetting;
+import com.edi.domain.model.user.UserId;
 
 public interface EnvironmentService {
     /**
@@ -21,6 +22,11 @@ public interface EnvironmentService {
    * @param user the user instance to be saved
    */
   List<EnvSetting> create(List<CreateEnvCommand> ec);
+
+  /**
+   * Copy EnvSetting
+   */
+  Boolean createCopy(List<EnvSetting> ec, UserId userid, String cfgId);
 
   /**
    * 카테고리 삭제

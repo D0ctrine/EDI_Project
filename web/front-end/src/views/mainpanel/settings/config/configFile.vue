@@ -10,44 +10,44 @@
     </p>
   <v-container style="height: 780px;overflow-y:auto;overflow-x: hidden;" fluid>
   <v-spacer style="height: 20px;flex-grow: 0 !important;"></v-spacer>
-  <p class="text-left itemHeader" style="min-width: 600px;width: 55%;"><v-icon size="25">mdi-cog-box</v-icon> 환경(Env)
+  <p class="text-left itemHeader" style="min-width: 600px;"><v-icon size="25">mdi-cog-box</v-icon> 환경(Env)
   <v-btn class="mx-2" v-on:click="insertRow('grid1')" style="float: right;" fab small dark color="indigo">
       <v-icon dark>
         mdi-plus
       </v-icon>
     </v-btn>
   </p>
-  <grid ref="tuiGrid1" :data="envProps.data" :columns="envProps.columns" :options="envProps.options" width="600"/>
+  <grid ref="tuiGrid1" :data="envProps.data" :columns="envProps.columns" :options="envProps.options"/>
 
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
-  <p class="text-left itemHeader" style="min-width: 600px;width: 55%;"><v-icon size="25">mdi-email</v-icon> 메일
+  <p class="text-left itemHeader" style="min-width: 600px;"><v-icon size="25">mdi-email</v-icon> 메일
   <v-btn class="mx-2" v-on:click="insertRow('grid2')" style="float: right;" fab small dark color="indigo">
       <v-icon dark>
         mdi-plus
       </v-icon>
     </v-btn>
   </p>
-  <grid ref="tuiGrid2" :data="mailProps.data" :columns="mailProps.columns" :options="mailProps.options" width="600"/>
+  <grid ref="tuiGrid2" :data="mailProps.data" :columns="mailProps.columns" :options="mailProps.options"/>
 
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
-  <p class="text-left itemHeader" style="min-width: 600px;width: 55%;"><v-icon size="25">mdi-file-star</v-icon> FTP
+  <p class="text-left itemHeader" style="min-width: 600px;"><v-icon size="25">mdi-file-star</v-icon> FTP
   <v-btn class="mx-2" v-on:click="insertRow('grid3')" style="float: right;" fab small dark color="indigo">
       <v-icon dark>
         mdi-plus
       </v-icon>
     </v-btn>
   </p>
-  <grid ref="tuiGrid3" :data="ftpProps.data" :columns="ftpProps.columns" :options="ftpProps.options" width="600"/>
+  <grid ref="tuiGrid3" :data="ftpProps.data" :columns="ftpProps.columns" :options="ftpProps.options"/>
 
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
-  <p class="text-left itemHeader" style="min-width: 600px;width: 55%;"><v-icon size="25">mdi-database-arrow-right</v-icon> Value
+  <p class="text-left itemHeader" style="min-width: 600px;"><v-icon size="25">mdi-database-arrow-right</v-icon> Value
   <v-btn class="mx-2" v-on:click="insertRow('grid4')" style="float: right;" fab small dark color="indigo">
       <v-icon dark>
         mdi-plus
       </v-icon>
     </v-btn>
   </p>
-  <grid ref="tuiGrid4" :data="queryProps.data" :columns="queryProps.columns" :options="queryProps.options" width="600"/>
+  <grid ref="tuiGrid4" :data="queryProps.data" :columns="queryProps.columns" :options="queryProps.options"/>
   <v-spacer style="height: 70px;flex-grow: 0 !important;"></v-spacer>
     <div class="text-center ma-2">
       <v-snackbar
@@ -89,11 +89,13 @@ class CustomDownBtnRenderer {
       var deleteRow = grid.getRow(rowKey)
       console.log('deleteRow')
       console.log(deleteRow)
-      if (deleteRow.gridName === 'grid1')configService.deleteEmail(deleteRow)
-      else if (deleteRow.gridName === 'grid2')configService.deleteEnv(deleteRow)
-      else if (deleteRow.gridName === 'grid3')configService.deleteFtp(deleteRow)
-      else if (deleteRow.gridName === 'grid4')configService.deleteQuery(deleteRow)
-      grid.removeRow(rowKey)
+      if (confirm((deleteRow.gridName === 'grid1' ? '환경(Env)' : deleteRow.gridName === 'grid2' ? '메일' : deleteRow.gridName === 'grid3' ? 'FTP' : deleteRow.gridName === 'grid4' ? 'Value' : '') + ' 값을 삭제하시겠습니까?')) {
+        if (deleteRow.gridName === 'grid1')configService.deleteEmail(deleteRow)
+        else if (deleteRow.gridName === 'grid2')configService.deleteEnv(deleteRow)
+        else if (deleteRow.gridName === 'grid3')configService.deleteFtp(deleteRow)
+        else if (deleteRow.gridName === 'grid4')configService.deleteQuery(deleteRow)
+        grid.removeRow(rowKey)
+      }
     })
     this.el = el
     this.render(props)
@@ -112,10 +114,14 @@ const options = {
   scrollX: false,
   scrollY: false,
   height: 'auto',
+  width: 'auto',
   rowHeight: 30,
   rowHeaders: ['rowNum'],
   header: {
     height: 30
+  },
+  columnOptions: {
+    resizable: true
   }
 }
 const envCols = [
@@ -242,7 +248,16 @@ const ftpCols = [
     header: 'Type',
     name: 'type',
     align: 'center',
-    editor: 'text'
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: [
+          { text: 'SFTP', value: 'SFTP' },
+          { text: 'FTP', value: 'FTP' }
+        ]
+      }
+    }
   },
   {
     header: 'Del',
@@ -267,6 +282,7 @@ const queryCols = [
   {
     header: 'Alias',
     name: 'key',
+    width: '160',
     align: 'center',
     editor: 'text'
   },
@@ -279,6 +295,7 @@ const queryCols = [
   {
     header: 'Type',
     name: 'type',
+    width: '100',
     align: 'center',
     formatter: 'listItemText',
     editor: {
@@ -295,12 +312,13 @@ const queryCols = [
     header: 'DB-Type',
     name: 'dbtype',
     align: 'center',
+    width: '100',
     formatter: 'listItemText',
     editor: {
       type: 'select',
       options: {
         listItems: [
-          { text: 'Coms', value: 'COMS' },
+          { text: 'Main', value: 'MAIN' },
           { text: 'Report', value: 'REPORT' },
           { text: 'Mes', value: 'MES' }
         ]
@@ -368,8 +386,8 @@ export default {
     }).then(() => {
       this.lineProcess = false
     }).catch(error => {
-      this.errorMessage = error.message
-      console.log(this.errorMessage)
+      this.snackbar = true
+      this.alertText = error.message
     })
   },
   methods: {
@@ -428,12 +446,8 @@ export default {
         }
 
         await configService.update(updateConfig)
-        console.log('update itemGrp')
-        console.log(itemGrp)
 
         await configService.config(this.selected.id).then((settingList) => {
-          console.log('selected~!!')
-          console.log(this.selected)
           if (settingList.emailList.length) {
             for (let i = 0; i < settingList.emailList.length; i++) {
               settingList.emailList[i].gridName = 'grid1'
@@ -462,8 +476,8 @@ export default {
           this.snackbar = true
           this.alertText = '데이터가 저장되었습니다!'
         }).catch(error => {
-          this.errorMessage = error.message
-          console.log(this.errorMessage)
+          this.snackbar = true
+          this.alertText = error.message
         })
       }
     }

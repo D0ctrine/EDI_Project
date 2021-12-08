@@ -4,12 +4,14 @@ import com.edi.domain.application.CategoryService;
 import com.edi.domain.application.commands.category.CreateCategoryCommand;
 import com.edi.domain.application.commands.category.UpdateCategoryCommand;
 import com.edi.domain.model.category.Category;
+import com.edi.domain.model.user.UserId;
 import com.edi.infrastructure.repository.CategoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -52,6 +54,14 @@ public class CategoryServiceImpl implements CategoryService{
     category.setUpdate_user(updateCategory.getUpdate_user());
     category.setName(updateCategory.getName());
     return categoryRepository.save(category);
+  }
+
+  @Override
+  public Category copyOne(String categoryId, UserId userid) {
+    Optional<Category> category = categoryRepository.findById(Long.parseLong(categoryId));
+    if(!category.isPresent()) throw new IllegalArgumentException();
+    Category newCategory = Category.create(userid, category.get().getName()+"_COPY", category.get().getFile_type(), category.get().getDepth(), category.get().getParent());
+    return categoryRepository.save(newCategory);
   }
 
 }

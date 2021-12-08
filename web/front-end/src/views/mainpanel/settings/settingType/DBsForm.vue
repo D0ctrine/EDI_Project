@@ -1,9 +1,9 @@
 <template>
-  <v-container fluid>
-    <v-row align="center">
+  <v-container id="container" fluid>
+    <v-row align="center" style="width:94%;">
       <v-col
         class="d-flex"
-        cols="12"
+        cols="10"
         sm="3"
       >
         <v-select
@@ -16,12 +16,25 @@
           outlined
         ></v-select>
       </v-col>
-      <v-col>
-        <v-btn tile color="primary" v-on:click="showResult()">
+      <v-col align="right">
+        <v-btn class="mr-10 purple lighten-2" tile v-on:click="daemonFileSave()">
+          <v-icon left size="30">
+            mdi-file-download
+          </v-icon>
+            Make File
+        </v-btn>
+
+        <v-btn class="mr-10 teal lighten-2" tile v-on:click="daemonFileSaveSendFTP()">
+          <v-icon left size="30">
+            mdi-file-export
+          </v-icon>
+            Send FTP
+        </v-btn>
+        <v-btn tile color="cyan" v-on:click="showResult()">
           <v-icon left size="30">
             mdi-database-search
           </v-icon>
-            Test
+            DATA
         </v-btn>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <v-btn tile color="default" v-on:click="saveData()" >
@@ -31,6 +44,7 @@
             Save
         </v-btn>
       </v-col>
+      <v-progress-linear style="margin-top: -20px;" class="mb-6" indeterminate v-if="this.lineProcess" color="yellow darken-2"></v-progress-linear>
       </v-row>
       <v-row>
         <span>
@@ -48,6 +62,21 @@
     </div>
         </span>
     </v-row>
+    <v-snackbar
+          v-model="snackbar"
+        >
+          {{ alertText }}
+          <template v-slot:action="{ attrs }">
+            <v-btn
+              color="pink"
+              text
+              v-bind="attrs"
+              @click="snackbar = false"
+            >
+              Close
+            </v-btn>
+          </template>
+        </v-snackbar>
   </v-container>
 </template>
 <script>
@@ -71,11 +100,14 @@ import convert from 'xml-js'
 export default {
   data () {
     return {
+      lineProcess: false,
+      snackbar: false,
+      content: '',
+      alertText: '',
       formData: {
         queryText: '',
         orginalQueryText: ''
       },
-      content: '',
       selectedItemValue: '',
       modifiedAlarm: '',
       modifiedTime: '',
@@ -89,23 +121,25 @@ export default {
         lineWrapping: true
       },
       items: [
+        { name: 'Main', value: 'MAIN' },
         { name: 'Mes', value: 'MES' },
-        { name: 'Report', value: 'REPORT' },
-        { name: 'Coms', value: 'COMS' }
+        { name: 'Report', value: 'REPORT' }
       ]
     }
   },
   props: ['selected', 'settingPropsList'],
   created () {
+    this.lineProcess = true
     settingService.getSQL(this.selected.id).then((returnList) => {
       this.formData.queryText = returnList.MainQuery.query
       this.formData.orginalQueryText = returnList.MainQuery.query
       this.selectedItemValue = returnList.MainQuery.dbtype
-      console.log('returnList')
-      console.log(returnList)
+      this.lineProcess = false
     }).catch(error => {
       this.errorMessage = error.message
-      console.log(this.errorMessage)
+      this.snackbar = true
+      this.alertText = this.errorMessage
+      this.lineProcess = false
     })
   },
   computed: {
@@ -122,7 +156,7 @@ export default {
       }
     },
     onCmReady (cm) {
-      this.codemirror.setSize('800', '500')
+      this.codemirror.setSize('100%', '560')
     },
     onCmFocus (cm) {
       console.log('the editor is focus!')
@@ -142,34 +176,43 @@ export default {
       this.$emit('codeChange', this.formData.queryText)
     },
     refreshData () {
+      this.lineProcess = true
       settingService.getSQL(this.selected.id).then((returnList) => {
         this.formData.queryText = returnList.MainQuery.query
         this.formData.orginalQueryText = returnList.MainQuery.query
         this.selectedItemValue = returnList.MainQuery.dbtype
+        this.lineProcess = false
       }).catch(error => {
         this.errorMessage = error.message
         console.log(this.errorMessage)
+        this.lineProcess = false
       })
     },
     async saveData () {
+      this.lineProcess = true
       // 마지막에 Parameter가 있을떄 마지막 공백있는지 확인하고 없으면 넣기
       await settingService.saveSQL({ query: this.formData.queryText, type: 'Main', settingId: this.selected.id, dbtype: this.selectedItemValue }).then(() => {
         this.formData.orginalQueryText = this.formData.queryText
         this.modifiedAlarm = ''
         this.modifiedTime = ''
-        alert('Saved!')
-      }).catch(error => { alert(error.message) })
+        this.snackbar = true
+        this.alertText = '저장되었습니다!'
+        this.lineProcess = false
+      }).catch(error => {
+        this.snackbar = true
+        this.alertText = error.message
+        this.lineProcess = false
+      })
     },
     async showResult () {
+      this.lineProcess = true
       let itemBox = await []
       let itemQuery = await ''
       // Common에 있는 Item List 가져오기
       const elementId = this.selected.parent.parent.children.find(item => item.name === 'common')
-
       let uniqueItemList = await configService.getItems({ categoryId: elementId.id, exConfigId: this.selected.id }).then(response => {
         return [...this.settingPropsList.itemList, ...response.itemList]
       })
-
       for (const item of uniqueItemList) {
         if (item.type === 'DB') {
           console.log(item)
@@ -189,11 +232,13 @@ export default {
       let result = await settingService.selectSQL({ query: (this.formData.queryText + ' '), database: this.selectedItemValue, items: itemBox })
       const header = await this.settingPropsList.headerList
       const tail = await this.settingPropsList.tailList
-      const start = await this.settingPropsList.envList.find(env => env.item === 'start').value
-      const end = await this.settingPropsList.envList.find(env => env.item === 'end').value
-      const between = await this.settingPropsList.envList.find(env => env.item === 'between').value
+      let start = await this.settingPropsList.envList.find(env => env.item === 'start').value
+      let end = await this.settingPropsList.envList.find(env => env.item === 'end').value
+      let between = await this.settingPropsList.envList.find(env => env.item === 'between').value
+      start = start || ''
+      end = end || ''
+      between = between || ''
       this.content = ''
-
       for (const element of header) {
         if (element.data_type.toString() === 'h_sql') {
           this.content += await settingService.selectSQL({ query: element.value.toString(), database: 'REPORT' }).then((sqlList) => sqlList.returnList[0].VALUE).catch(error => { console.log(error.message) })
@@ -203,7 +248,8 @@ export default {
         // tail 1,2,3,,,마다 줄 바꿈
         this.content += await '\r\n'
       }
-
+      console.log('start end between')
+      console.log(start + '/' + end + '/' + between)
       if (this.settingPropsList.dataType === 'xml') {
         console.log('Its XML !=======')
         let parent = await this.settingPropsList.envList.find(env => env.item === 'parent').value
@@ -223,9 +269,7 @@ export default {
           this.content += end.value + '\r\n'
         }
       } else {
-
       }
-
       await tail.forEach(element => {
         if (element.data_type.toString() === 't_sql') {
           settingService.selectSQL({ query: element.value.toString(), database: 'REPORT' }).then((sqlList) => {
@@ -245,6 +289,30 @@ export default {
       })
       let blob = await new Blob([this.content], { type: 'text/plain;charset=' + this.settingPropsList.charSet })
       await FileSaver.saveAs(blob, changeFileName + '.' + this.settingPropsList.fileType)
+    },
+    async daemonFileSave () {
+      this.lineProcess = true
+      await settingService.setDaemonFileSave(this.selected.id).then(() => {
+        this.snackbar = true
+        this.alertText = '파일이 서버에 저장되었습니다!'
+        this.lineProcess = false
+      }).catch(error => {
+        this.snackbar = true
+        this.alertText = error.message
+        this.lineProcess = false
+      })
+    },
+    async daemonFileSaveSendFTP () {
+      this.lineProcess = true
+      await settingService.setDaemonSendFtp(this.selected.id).then(() => {
+        this.snackbar = true
+        this.alertText = '파일이 서버에 저장 후 FTP 전송되었습니다!'
+        this.lineProcess = false
+      }).catch(error => {
+        this.snackbar = true
+        this.alertText = error.message
+        this.lineProcess = false
+      })
     }
   }
 

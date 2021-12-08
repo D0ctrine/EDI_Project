@@ -1,0 +1,1029 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.nexmore.rfiddaemon.mapper.ReaderManageMapper">
+
+    <resultMap id="ReaderVO" type="kr.co.nexmore.rfiddaemon.vo.reader.ReaderVO">
+        <result column="RD_MAC" property="readerMac" />
+        <result column="RD_NAME" property="readerName" />
+        <result column="RD_IP" property="readerIp" />
+        <result column="RD_PORT" property="readerPort" />
+        <result column="RD_CHANNEL_CNT" property="channelCnt" />
+        <result column="RD_INTERVAL" property="readerInterval" />
+        <result column="RD_BUZZER_YN" property="buzzerYn" />
+        <result column="RD_READ_ADDRESS" property="readAddress" />
+        <result column="RD_READ_LENGTH" property="readLength" />
+        <result column="MES_USE_YN" property="mesUseYn" />
+        <result column="STATION_X_ID" property="stationXId" />
+        <result column="RD_FIRMWARE_VERSION" property="firmwareVersion" />
+    </resultMap>
+
+	<insert id="createReader" parameterType="ReaderVO">
+		INSERT INTO RFID2_RD_INFO_TM (
+			RD_MAC
+		  , RD_NAME
+		  , EQUIPMENT_CODE
+		  , RD_IP
+		  , RD_PORT
+		  , RD_SUBNETMASK
+		  , RD_GATEWAY
+		  , RD_CHANNEL_CNT
+		  , REG_ID
+		  , REG_DATE
+	  ) VALUES (
+	  		#{readerMac}
+	  	  , #{readerName}
+	  	  , #{equipmentCode}
+	  	  , #{readerIp}
+	  	  , #{readerPort}
+	  	  , #{readerSubnetMask}
+	  	  , #{readerGateway}
+	  	  , #{channelCnt}
+	  	  , #{regId}
+	  	  , SYSTIMESTAMP
+	)
+	</insert>
+
+	<insert id="createReaderStatus" parameterType="ReaderVO">
+		INSERT INTO RFID2_RD_STATUS_TM (
+			RD_MAC
+		) VALUES (
+			#{readerMac}
+		)
+	</insert>
+
+	<delete id="deleteReader" parameterType="String">
+		DELETE FROM RFID2_RD_INFO_TM
+		WHERE RD_MAC = #{readerMac}
+	</delete>
+
+	<!-- 테스트용 조건 40.40.40.190 번대 개발기용 쿼리 -->
+<!--    <select id="getReaderList" resultMap="ReaderVO">
+		SELECT  RD.RD_MAC
+        	  , RD_NAME
+        	  , PR.PROCESS_NAME
+        	  , MD.MODEL_NAME
+        	  , EQ.EQUIPMENT_CODE
+              , EQUIPMENT_NAME
+              , RD_IP
+              , RD_PORT
+              , RD_CHANNEL_CNT
+	 	 	  , RD_INTERVAL
+              , RD_BUZZER_YN
+              , RD_READ_ADDRESS
+              , RD_READ_LENGTH
+              , MES_USE_YN
+              , STATION_X_ID
+              , RD_FIRMWARE_VERSION
+        FROM RFID2_RD_INFO_TM RD
+        INNER JOIN RFID2_RD_STATUS_TM RS ON RS.RD_MAC = RD.RD_MAC
+        INNER JOIN RFID2_EQUIPMENT_INFO_TM EQ ON EQ.EQUIPMENT_CODE = RD.EQUIPMENT_CODE
+        INNER JOIN RFID2_MODEL_INFO_TM MD ON MD.MODEL_CODE = EQ.MODEL_CODE
+        INNER JOIN RFID2_PROCESS_INFO_TM PR ON PR.PROCESS_CODE = MD.PROCESS_CODE
+        WHERE RD_IP LIKE '40.40.40.19%'
+        OR RD_IP LIKE '40.40.40.9%'
+        OR RD_IP = '40.40.40.161'
+        OR RD_IP = '40.40.40.162'
+    </select>-->
+
+    <select id="getReaderList" resultMap="ReaderVO">
+		SELECT  RD.RD_MAC
+        	  , RD_NAME
+        	  , PR.PROCESS_NAME
+        	  , MD.MODEL_NAME
+        	  , EQ.EQUIPMENT_CODE
+              , EQUIPMENT_NAME
+              , RD_IP
+              , RD_PORT
+              , RD_CHANNEL_CNT
+	 	 	  , RD_INTERVAL
+              , RD_BUZZER_YN
+              , RD_READ_ADDRESS
+              , RD_READ_LENGTH
+              , MES_USE_YN
+              , STATION_X_ID
+              , RD_FIRMWARE_VERSION
+        FROM RFID2_RD_INFO_TM RD
+        INNER JOIN RFID2_RD_STATUS_TM RS ON RS.RD_MAC = RD.RD_MAC
+        INNER JOIN RFID2_EQUIPMENT_INFO_TM EQ ON EQ.EQUIPMENT_CODE = RD.EQUIPMENT_CODE
+        INNER JOIN RFID2_MODEL_INFO_TM MD ON MD.MODEL_CODE = EQ.MODEL_CODE
+        INNER JOIN RFID2_PROCESS_INFO_TM PR ON PR.PROCESS_CODE = MD.PROCESS_CODE
+        ORDER BY RD_NAME ASC, RD_IP ASC
+    </select>
+
+    <select id="getReaderInfo" resultMap="ReaderVO">
+		SELECT  RD.RD_MAC
+        	  , RD_NAME
+        	  , PR.PROCESS_NAME
+        	  , MD.MODEL_NAME
+        	  , EQ.EQUIPMENT_CODE
+              , EQUIPMENT_NAME
+              , RD_IP
+              , RD_PORT
+              , RD_CHANNEL_CNT
+	 	 	  , RD_INTERVAL
+              , RD_BUZZER_YN
+              , RD_READ_ADDRESS
+              , RD_READ_LENGTH
+              , MES_USE_YN
+              , STATION_X_ID
+              , RD_FIRMWARE_VERSION
+        FROM RFID2_RD_INFO_TM RD
+        INNER JOIN RFID2_RD_STATUS_TM RS ON RS.RD_MAC = RD.RD_MAC
+        INNER JOIN RFID2_EQUIPMENT_INFO_TM EQ ON EQ.EQUIPMENT_CODE = RD.EQUIPMENT_CODE
+        INNER JOIN RFID2_MODEL_INFO_TM MD ON MD.MODEL_CODE = EQ.MODEL_CODE
+        INNER JOIN RFID2_PROCESS_INFO_TM PR ON PR.PROCESS_CODE = MD.PROCESS_CODE
+        WHERE RD.RD_MAC = #{readerMac}
+    </select>
+
+	<select id="ipExistedCheck" parameterType="string" resultType="int">
+		SELECT COUNT(*)
+		FROM RFID2_RD_INFO_TM
+		WHERE RD_IP = #{changeIp}
+	</select>
+
+    <select id="getMacAddress" parameterType="map" resultType="string">
+        SELECT  RD_MAC
+		FROM RFID2_RD_INFO_TM
+        WHERE RD_IP IN
+        <foreach collection="list" index="index" item="readerIp" open="(" close=")" separator=",">
+			#{readerIp}
+		</foreach>
+    </select>
+
+	<select id="equipmentExistedCheck" resultType="String">
+		SELECT
+			EQUIPMENT_NAME
+		FROM
+			RFID2_EQUIPMENT_INFO_TM
+		WHERE
+			EQUIPMENT_CODE = #{equipmentCode}
+	</select>
+
+	<select id="getEquipmentName" resultType="String">
+		SELECT RD_NAME FROM (
+			SELECT RD_NAME
+			FROM RFID2_RD_INFO_TM
+			WHERE EQUIPMENT_CODE = #{equipmentCode}
+			ORDER BY RD_NAME DESC
+		)
+		WHERE ROWNUM = 1
+	</select>
+
+	<update id="updateReader" parameterType="ReaderVO">
+		UPDATE RFID2_RD_INFO_TM
+		SET
+			EQUIPMENT_CODE = #{equipmentCode}
+		  , RD_NAME = #{readerName}
+		  , RD_BUZZER_YN = #{buzzerYn}
+		  , RD_INTERVAL = #{readerInterval}
+		  , MOD_ID = #{regId}
+		  , MOD_DATE = SYSTIMESTAMP
+	  	WHERE RD_MAC = #{readerMac}
+	</update>
+
+    <update id="setFirmwareVersion" parameterType="ReaderVO">
+        UPDATE RFID2_RD_INFO_TM
+        SET
+            RD_FIRMWARE_VERSION = #{version}
+          , MOD_ID = 'SYSTEM'
+          , MOD_DATE = SYSTIMESTAMP
+        WHERE RD_MAC = #{readerMac}
+    </update>
+
+	<select id="getLastReaderData" parameterType="map" resultType="java.util.LinkedHashMap">
+	SELECT * FROM
+	(
+		SELECT
+			EH.EVENT_LOG_ID AS "eventLogId"
+			, EH.EVENT_TYPE AS "eventType"
+			, EH.ANTENNA_NUM AS "eventChannel"
+			, TO_CHAR(EH.REG_DATE, 'YYYYMMDDHH24MISSFF3') AS "regDate"
+			, EH.RET_VAL AS "retVal"
+			<choose>
+				<when test="eventChannel == 1">
+					, EH.ANT1_TAG_UID AS "tagUid"
+					, EH.ANT1_MAGAZINE_ID AS "magazineId"
+				</when>
+				<when test ="eventChannel == 2">
+					, EH.ANT2_TAG_UID AS "tagUid"
+			        , EH.ANT2_MAGAZINE_ID AS "magazineId"
+				</when>
+                <when test ="eventChannel == 3">
+					, EH.ANT3_TAG_UID AS "tagUid"
+                    , EH.ANT3_MAGAZINE_ID AS "magazineId"
+                </when>
+                <otherwise>
+					, EH.ANT4_TAG_UID AS "tagUid"
+                    , EH.ANT4_MAGAZINE_ID AS "magazineId"
+				</otherwise>
+			</choose>
+		FROM RFID2_RD_INFO_TM RI
+		INNER JOIN RFID2_EVENT_HISTORY_TM EH ON RI.RD_IP = EH.RD_IP
+		WHERE RI.RD_MAC = #{vo.readerMac}
+		AND RI.RD_IP = #{vo.readerIp}
+		AND EH.EQUIPMENT_NAME = #{vo.equipmentName}
+		AND EH.ANTENNA_NUM = #{eventChannel}
+		AND EH.EVENT_TYPE LIKE '%MES%'
+		AND EH.REG_DATE > RI.REG_DATE
+		ORDER BY EH.REG_DATE DESC, EH.EVENT_LOG_ID DESC
+	)
+	WHERE ROWNUM = 1
+	</select>
+
+	<select id="getLastLotStatus" parameterType="String" resultType="java.util.LinkedHashMap">
+		SELECT
+			RD_MAC
+			, ANT1_TAG_UID AS "ch1TagUid"
+			, ANT1_MAGAZINE_ID AS "ch1MagazineId"
+			, ANT1_LOT_ID AS "ch1LotId"
+			, ANT1_STATUS AS "ch1Status"
+			, ANT2_TAG_UID AS "ch2TagUid"
+			, ANT2_MAGAZINE_ID AS "ch2MagazineId"
+			, ANT2_LOT_ID AS "ch2LotId"
+			, ANT2_STATUS AS "ch2Status"
+			, ANT3_TAG_UID AS "ch3TagUid"
+			, ANT3_MAGAZINE_ID AS "ch3MagazineId"
+			, ANT3_LOT_ID AS "ch3LotId"
+			, ANT3_STATUS AS "ch3Status"
+			, ANT4_TAG_UID AS "ch4TagUid"
+			, ANT4_MAGAZINE_ID AS "ch4MagazineId"
+			, ANT4_LOT_ID AS "ch4LotId"
+			, ANT4_STATUS AS "ch4Status"
+		FROM RFID2_RD_STATUS_TM
+		WHERE RD_MAC = #{readerMac}
+	</select>
+
+	<select id="getLotStartData" parameterType="String" resultType="java.util.LinkedHashMap">
+		SELECT * FROM (
+			SELECT
+				RI.RD_MAC
+				, EH.ANT1_MAGAZINE_ID AS "ch1MagazineId"
+				, EH.ANT2_MAGAZINE_ID AS "ch2MagazineId"
+				, EH.ANT3_MAGAZINE_ID AS "ch3MagazineId"
+				, EH.ANT4_MAGAZINE_ID AS "ch4MagazineId"
+				, TO_CHAR(EH.MOD_DATE, 'YYYYMMDDHH24MISSFF3') AS "modDate"
+			FROM RFID2_EVENT_HISTORY_TM EH
+			INNER JOIN RFID2_RD_INFO_TM RI
+			ON RI.RD_IP = EH.RD_IP
+			WHERE RI.RD_MAC = #{readerMac}
+			AND EH.EVENT_TYPE = 'SEND_MES_START'
+			AND EH.ANT1_LOT_ID = #{lotId}
+			ORDER BY EH.MOD_DATE DESC
+		)
+		WHERE ROWNUM = 1
+	</select>
+
+	<select id="getLastInsertTime" parameterType="EventHistoryVO" resultType="String">
+		SELECT
+			TO_CHAR(REG_DATE, 'YYYYMMDDHH24MISSFF3') AS REG_DATE
+		FROM
+			RFID2_EVENT_HISTORY_TM
+		WHERE
+			EVENT_LOG_ID = #{eventLogId}
+	</select>
+
+	<select id="getEventHistory" parameterType="int" resultType="eventHistoryVO">
+		SELECT
+			RD_NAME AS readerName
+		  , RD_IP AS readerIp
+          , EQUIPMENT_NAME
+          , EVENT_TYPE
+          , ANTENNA_NUM
+          , ANT1_TAG_UID
+          , ANT1_MAGAZINE_ID
+          , ANT1_LOT_ID
+		  , ANT2_TAG_UID
+          , ANT2_MAGAZINE_ID
+          , ANT2_LOT_ID
+          , ANT3_TAG_UID
+          , ANT3_MAGAZINE_ID
+          , ANT3_LOT_ID
+          , ANT4_TAG_UID
+          , ANT4_MAGAZINE_ID
+          , ANT4_LOT_ID
+          , RET_VAL
+          , MODEL_NAME
+          , RD_CHANNEL_CNT
+		FROM
+			RFID2_EVENT_HISTORY_TM
+		WHERE
+			EVENT_LOG_ID = #{eventLogId}
+	</select>
+
+<!--	<select id="getLastInsertId" parameterType="EventHistoryVO" resultType="map">
+		SELECT
+			EVENT_LOG_ID AS "eventLogId"
+		  , REG_DATE AS "regDate"
+		FROM
+		(
+			SELECT
+				EVENT_LOG_ID, TO_CHAR(REG_DATE, 'YYYYMMDDHH24MISSFF3') AS REG_DATE
+			FROM
+				RFID2_EVENT_HISTORY_TM
+			WHERE
+				EQUIPMENT_NAME = #{equipmentName}
+			AND
+				RD_IP = #{readerIp}
+			AND
+				EVENT_TYPE = #{eventType}
+			AND
+				MOD_DATE IS NULL OR MOD_DATE = ''
+            <choose>
+                <when test="antennaNum == 1">
+                    <if test="ant1TagUid != null and ant1TagUid != ''">
+                      AND ANT1_TAG_UID = #{ant1TagUid}
+                    </if>
+                </when>
+                <when test="antennaNum == 2">
+                    <if test="ant2TagUid != null and ant2TagUid != ''">
+                      AND ANT2_TAG_UID = #{ant2TagUid}
+                    </if>
+                </when>
+                <when test="antennaNum == 3">
+                    <if test="ant3TagUid != null and ant3TagUid != ''">
+                      AND ANT3_TAG_UID = #{ant3TagUid}
+                    </if>
+                </when>
+                <when test="antennaNum == 4">
+                    <if test="ant4TagUid != null and ant4TagUid != ''">
+                      AND ANT4_TAG_UID = #{ant4TagUid}
+                    </if>
+                </when>
+            </choose>
+			ORDER BY EVENT_LOG_ID DESC
+		)
+		WHERE
+		ROWNUM = 1
+	</select>-->
+
+	<insert id="insertEventHistory" parameterType="EventHistoryVO">
+			INSERT INTO RFID2_EVENT_HISTORY_TM (
+					EVENT_LOG_ID
+				  , RD_NAME
+				  , RD_IP
+				  , EQUIPMENT_NAME
+				  , MODEL_NAME
+				  , RD_CHANNEL_CNT
+				  , EVENT_TYPE
+				  , ANTENNA_NUM
+				  , ANT1_TAG_UID
+				  , ANT1_MAGAZINE_ID
+				  , ANT1_LOT_ID
+				  , ANT2_TAG_UID
+				  , ANT2_MAGAZINE_ID
+				  , ANT2_LOT_ID
+				  , ANT3_TAG_UID
+				  , ANT3_MAGAZINE_ID
+				  , ANT3_LOT_ID
+				  , ANT4_TAG_UID
+				  , ANT4_MAGAZINE_ID
+				  , ANT4_LOT_ID
+				  , RET_VAL
+				  , RET_MSG
+				  , REG_DATE
+			)
+			VALUES (
+					EVENT_LOG_SEQ.NEXTVAL
+				  , #{readerName}
+				  , #{readerIp}
+				  , #{equipmentName}
+				  , #{modelName}
+				  , #{rdChannelCnt}
+				  , #{eventType}
+				  , #{antennaNum}
+				  , #{ant1TagUid}
+				  , #{ant1MagazineId}
+				  , #{ant1LotId}
+				  , #{ant2TagUid}
+				  , #{ant2MagazineId}
+				  , #{ant2LotId}
+				  , #{ant3TagUid}
+				  , #{ant3MagazineId}
+				  , #{ant3LotId}
+				  , #{ant4TagUid}
+				  , #{ant4MagazineId}
+				  , #{ant4LotId}
+				  , #{retVal}
+				  , #{retMsg}
+				  , SYSTIMESTAMP
+			)
+	</insert>
+
+	<insert id="insertMesEventHistory"   parameterType="EventHistoryVO">
+			<selectKey keyProperty="eventLogId" resultType="Integer" order="BEFORE">
+				SELECT EVENT_LOG_SEQ.NEXTVAL AS "eventLogId" FROM DUAL
+			</selectKey>
+			INSERT INTO RFID2_EVENT_HISTORY_TM (
+					EVENT_LOG_ID
+				  , RD_NAME
+				  , RD_IP
+				  , EQUIPMENT_NAME
+				  , MODEL_NAME
+				  , RD_CHANNEL_CNT
+				  , EVENT_TYPE
+				  , ANTENNA_NUM
+				  , ANT1_TAG_UID
+				  , ANT1_MAGAZINE_ID
+				  , ANT1_LOT_ID
+				  , ANT2_TAG_UID
+				  , ANT2_MAGAZINE_ID
+				  , ANT2_LOT_ID
+				  , ANT3_TAG_UID
+				  , ANT3_MAGAZINE_ID
+				  , ANT3_LOT_ID
+				  , ANT4_TAG_UID
+				  , ANT4_MAGAZINE_ID
+				  , ANT4_LOT_ID
+				  , RET_VAL
+				  , RET_MSG
+				  , REG_DATE
+			)
+			VALUES (
+					#{eventLogId}
+				  , #{readerName}
+				  , #{readerIp}
+				  , #{equipmentName}
+				  , #{modelName}
+				  , #{rdChannelCnt}
+				  , #{eventType}
+				  , #{antennaNum}
+				  , #{ant1TagUid}
+				  , #{ant1MagazineId}
+				  , #{ant1LotId}
+				  , #{ant2TagUid}
+				  , #{ant2MagazineId}
+				  , #{ant2LotId}
+				  , #{ant3TagUid}
+				  , #{ant3MagazineId}
+				  , #{ant3LotId}
+				  , #{ant4TagUid}
+				  , #{ant4MagazineId}
+				  , #{ant4LotId}
+				  , #{retVal}
+				  , #{retMsg}
+				  , SYSTIMESTAMP
+			)
+	</insert>
+
+	<update id="updateEventHistory"   parameterType="EventHistoryVO">
+			UPDATE
+				RFID2_EVENT_HISTORY_TM
+			SET
+				ANT1_LOT_ID = #{ant1LotId}
+			  , ANT2_LOT_ID = #{ant2LotId}
+			  , ANT3_LOT_ID = #{ant3LotId}
+			  , ANT4_LOT_ID = #{ant4LotId}
+			  , RET_VAL = #{retVal}
+			  , MOD_DATE = SYSTIMESTAMP
+			  , RET_MSG = #{retMsg}
+			WHERE
+				EVENT_LOG_ID = #{eventLogId}
+	</update>
+
+<!--	<update id="updateReaderMsg" parameterType="EventHistoryVO">
+		UPDATE
+			RFID2_RD_STATUS_TM
+		SET
+			<choose>
+				<when test="antennaNum == 1">
+					ANT1_MSG = {retMsg}
+				</when>
+				<when test="antennaNum == 2">
+					ANT2_MSG = {retMsg}
+				</when>
+				<when test="antennaNum == 3">
+					ANT3_MSG = {retMsg}
+				</when>
+				<when test="antennaNum == 4">
+					ANT4_MSG = {retMsg}
+				</when>
+			</choose>
+		WHERE
+			RD_MAC = (SELECT RD_MAC FROM RFID2_RD_INFO_TM WHERE RD_NAME = #{readerName})
+	</update>-->
+
+
+<!--    <update id="setReaderLotStatus" parameterType="map">
+        UPDATE
+          RFID2_RD_STATUS_TM
+        SET
+          <choose>
+              <when test="eventType == 'LOT_START'">
+                  <choose>
+                      <when test="reply.resv_flag_5 == '1' or reply.resv_flag_5 == '3'">
+                          ANT1_STATUS = #{eventType}
+                          , ANT1_LOT_ID = #{reply.resv_field_1}
+                          , ANT1_START_TIME = SYSTIMESTAMP
+                          , ANT3_STATUS = #{eventType}
+                          , ANT3_LOT_ID = #{reply.resv_field_1}
+                          , ANT3_START_TIME = SYSTIMESTAMP
+                      </when>
+                      <otherwise>
+                          ANT2_STATUS = #{eventType}
+                          , ANT2_LOT_ID = #{reply.resv_field_1}
+                          , ANT2_START_TIME = SYSTIMESTAMP
+                          , ANT4_STATUS = #{eventType}
+                          , ANT4_LOT_ID = #{reply.resv_field_1}
+                          , ANT4_START_TIME = SYSTIMESTAMP
+                      </otherwise>
+                  </choose>
+              </when>
+              <when test="eventType == 'LOT_END'">
+                  <choose>
+                      <when test="reply.resv_flag_5 == '1' or reply.resv_flag_5 == '3'">
+                          ANT1_STATUS = #{eventType}
+                          , ANT1_LOT_ID = #{reply.resv_field_2}
+                          , ANT1_START_TIME = SYSTIMESTAMP
+                          , ANT3_STATUS = #{eventType}
+                          , ANT3_LOT_ID = #{reply.resv_field_2}
+                          , ANT3_START_TIME = SYSTIMESTAMP
+                      </when>
+                      <otherwise>
+                          ANT2_STATUS = #{eventType}
+                          , ANT2_LOT_ID = #{reply.resv_field_2}
+                          , ANT2_START_TIME = SYSTIMESTAMP
+                          , ANT4_STATUS = #{eventType}
+                          , ANT4_LOT_ID = #{reply.resv_field_2}
+                          , ANT4_START_TIME = SYSTIMESTAMP
+                      </otherwise>
+                  </choose>
+              </when>
+          </choose>
+        WHERE
+          RD_MAC = #{readerMac}
+    </update>-->
+
+	<!-- W/B M/Z EJECT 신호시 -->
+	<update id="setLotEndForWB">
+		UPDATE
+			RFID2_RD_STATUS_TM
+		SET
+			ANT1_TAG_UID = null
+			, ANT1_MAGAZINE_ID = null
+			, ANT1_MSG = null
+			, ANT1_START_TIME = null
+			, ANT1_STATUS = 'LOT_END'
+			, ANT2_TAG_UID = null
+			, ANT2_MAGAZINE_ID = null
+			, ANT2_MSG = null
+			, ANT2_START_TIME = null
+			, ANT2_STATUS = 'LOT_END'
+		WHERE
+			RD_MAC = #{readerMac}
+	</update>
+
+	<update id="setLotStatus" parameterType="map">
+		UPDATE
+			RFID2_RD_STATUS_TM
+		SET
+		<choose>
+			<when test="reply.resv_flag_5 == '1'">
+				ANT1_MSG = #{reply.h_msg}
+			</when>
+			<when test="reply.resv_flag_5 == '2'">
+				ANT2_MSG = #{reply.h_msg}
+			</when>
+		</choose>
+		<choose>
+			<when test="reply.resv_flag_1 == 'Y' and reply.resv_field_1 != null">
+				, ANT1_LOT_ID = #{reply.resv_field_1}
+				, ANT1_STATUS = 'LOT_START'
+				<if test = "reply.magazine_id_2 != null">
+					, ANT2_LOT_ID = #{reply.resv_field_1}
+					, ANT2_STATUS = 'LOT_START'
+				</if>
+			</when>
+			<when test="reply.resv_flag_2 == 'Y' and reply.resv_field_2 != null">
+				, ANT1_LOT_ID = #{reply.resv_field_1}
+				, ANT1_STATUS = 'LOT_END'
+				<if test = "reply.magazine_id_2 != null">
+					, ANT2_LOT_ID = #{reply.resv_field_1}
+					, ANT2_STATUS = 'LOT_END'
+				</if>
+			</when>
+			<when test ="reply.resv_field_3 != null and reply.resv_field_3 !=''">
+				<if test="reply.resv_flag_5 == '2'">
+					, ANT2_LOT_ID = #{reply.resv_field_3}
+					, ANT2_STATUS = 'LOT_START'
+				</if>
+			</when>
+		</choose>
+		WHERE
+			RD_MAC = #{readerMac}
+	</update>
+
+
+    <update id="setCh2ReaderStatus" parameterType="map">
+        UPDATE
+			RFID2_RD_STATUS_TM
+        SET
+        <choose>
+            <when test="vo.ant == 1">
+                ANT1_TAG_UID = #{vo.tagUid}
+                , ANT1_MAGAZINE_ID = #{vo.data}
+                , ANT1_MSG = #{mesMessage}
+				<choose>
+					<when test = "vo.eventStatus == 'START' or vo.eventStatus == 'END'">
+						<if test="vo.lotId != null and vo.lotId != ''">
+							, ANT1_LOT_ID = #{vo.lotId}
+						</if>
+						<choose>
+							<when test="vo.eventStatus == 'START'">
+								, ANT1_STATUS = #{vo.eventStatus}
+								, ANT1_START_TIME = SYSTIMESTAMP
+							</when>
+							<when test="vo.eventStatus == 'END'">
+								, ANT1_END_TIME = SYSTIMESTAMP
+							</when>
+						</choose>
+					</when>
+					<when test="vo.eventStatus == 'LOT_START' or vo.eventStatus == 'LOT_END'">
+						<choose>
+							<when test="processName == 'WIRE BOND'">
+								, ANT1_LOT_ID = #{vo.mesLotId1}
+								, ANT1_STATUS = #{vo.eventStatus}
+							</when>
+							<otherwise>
+								, ANT1_LOT_ID = #{vo.mesLotId1}
+								, ANT1_STATUS = #{vo.eventStatus}
+								, ANT2_LOT_ID = #{vo.mesLotId2}
+								, ANT2_STATUS = #{vo.eventStatus}
+							</otherwise>
+						</choose>
+					</when>
+				</choose>
+            </when>
+            <otherwise>
+                ANT2_TAG_UID = #{vo.tagUid}
+                , ANT2_MAGAZINE_ID = #{vo.data}
+                , ANT2_MSG = #{mesMessage}
+				<choose>
+					<when test = "vo.eventStatus == 'START' or vo.eventStatus == 'END'">
+						<if test="vo.lotId != null and vo.lotId != ''">
+							, ANT2_LOT_ID = #{vo.lotId}
+						</if>
+						<choose>
+							<when test="vo.eventStatus == 'START'">
+								, ANT2_STATUS = #{vo.eventStatus}
+								, ANT2_START_TIME = SYSTIMESTAMP
+							</when>
+							<when test="vo.eventStatus == 'END'">
+								, ANT2_END_TIME = SYSTIMESTAMP
+							</when>
+						</choose>
+					</when>
+					<when test="vo.eventStatus == 'LOT_START' or vo.eventStatus == 'LOT_END'">
+						<choose>
+							<when test="processName == 'WIRE BOND'">
+								, ANT2_LOT_ID = #{vo.mesLotId2}
+								, ANT2_STATUS = #{vo.eventStatus}
+							</when>
+							<otherwise>
+								, ANT1_LOT_ID = #{vo.mesLotId1}
+								, ANT1_STATUS = #{vo.eventStatus}
+								, ANT2_LOT_ID = #{vo.mesLotId2}
+								, ANT2_STATUS = #{vo.eventStatus}
+							</otherwise>
+						</choose>
+					</when>
+				</choose>
+            </otherwise>
+        </choose>
+        WHERE
+        RD_MAC = #{readerMac}
+    </update>
+
+	<!-- 4채널 리더기 현재 상태 업데이트(현재 읽은 값) -->
+	<update id="setCh4ReaderStatus" parameterType="map">
+		UPDATE
+			RFID2_RD_STATUS_TM
+		SET
+		<choose>
+			<when test="vo.ant == 1 or vo.ant == 3">
+				<if test="vo.ant == 1">
+					ANT1_TAG_UID = #{vo.tagUid}
+					, ANT1_MAGAZINE_ID = #{vo.data}
+					, ANT1_MSG = #{mesMessage}
+					<choose>
+						<when test = "vo.eventStatus == 'START' or vo.eventStatus == 'END'">
+							, ANT1_STATUS = #{vo.eventStatus}
+							<if test="vo.lotId != null and vo.lotId != ''">
+								, ANT1_LOT_ID = #{vo.lotId}
+							</if>
+							<choose>
+								<when test="vo.eventStatus == 'START'">
+									, ANT1_START_TIME = SYSTIMESTAMP
+								</when>
+								<when test="vo.eventStatus == 'END'">
+									, ANT1_END_TIME = SYSTIMESTAMP
+								</when>
+							</choose>
+						</when>
+						<when test="vo.eventStatus == 'LOT_START' or vo.eventStatus == 'LOT_END'">
+							<if test="processName != 'PLASMA'">
+								, ANT1_LOT_ID = #{vo.mesLotId1}
+								, ANT1_STATUS = #{vo.eventStatus}
+							</if>
+						</when>
+					</choose>
+				</if>
+				<if test="vo.ant == 3">
+					ANT3_TAG_UID = #{vo.tagUid}
+					, ANT3_MAGAZINE_ID = #{vo.data}
+					, ANT3_MSG = #{mesMessage}
+					<choose>
+						<when test = "vo.eventStatus == 'START' or vo.eventStatus == 'END'">
+							, ANT3_STATUS = #{vo.eventStatus}
+							<if test="vo.lotId != null and vo.lotId != ''">
+								, ANT3_LOT_ID = #{vo.lotId}
+							</if>
+							<choose>
+								<when test="vo.eventStatus == 'START'">
+									, ANT3_START_TIME = SYSTIMESTAMP
+								</when>
+								<otherwise>
+									, ANT3_END_TIME = SYSTIMESTAMP
+								</otherwise>
+							</choose>
+						</when>
+						<when test="vo.eventStatus == 'LOT_START' or vo.eventStatus == 'LOT_END'">
+							<if test="processName != 'PLASMA'">
+								, ANT3_LOT_ID = #{vo.mesLotId3}
+								, ANT3_STATUS = #{vo.eventStatus}
+							</if>
+						</when>
+					</choose>
+				</if>
+				<if test="processName == 'PLASMA'">
+					<if test="vo.eventStatus == 'LOT_START' or vo.eventStatus == 'LOT_END'">
+						, ANT1_LOT_ID = #{vo.mesLotId1}
+						, ANT1_STATUS = #{vo.eventStatus}
+						, ANT3_LOT_ID = #{vo.mesLotId3}
+						, ANT3_STATUS = #{vo.eventStatus}
+					</if>
+				</if>
+			</when>
+			<when test="vo.ant == 2 or vo.ant == 4">
+				<if test="vo.ant == 2">
+					ANT2_TAG_UID = #{vo.tagUid}
+					, ANT2_MAGAZINE_ID = #{vo.data}
+					, ANT2_MSG = #{mesMessage}
+					<choose>
+						<when test = "vo.eventStatus == 'START' or vo.eventStatus == 'END'">
+							, ANT2_STATUS = #{vo.eventStatus}
+							<if test="vo.lotId != null and vo.lotId != ''">
+								, ANT2_LOT_ID = #{vo.lotId}
+							</if>
+							<choose>
+								<when test="vo.eventStatus == 'START'">
+									, ANT2_START_TIME = SYSTIMESTAMP
+								</when>
+								<when test="vo.eventStatus == 'END'">
+									, ANT2_END_TIME = SYSTIMESTAMP
+								</when>
+							</choose>
+						</when>
+						<when test="vo.eventStatus == 'LOT_START' or vo.eventStatus == 'LOT_END'">
+							<if test="processName != 'PLASMA'">
+								, ANT2_LOT_ID = #{vo.mesLotId2}
+								, ANT2_STATUS = #{vo.eventStatus}
+							</if>
+						</when>
+					</choose>
+				</if>
+				<if test="vo.ant == 4">
+					ANT4_TAG_UID = #{vo.tagUid}
+					, ANT4_MAGAZINE_ID = #{vo.data}
+					, ANT4_MSG = #{mesMessage}
+					<choose>
+						<when test = "vo.eventStatus == 'START' or vo.eventStatus == 'END'">
+							, ANT4_STATUS = #{vo.eventStatus}
+							<if test="vo.lotId != null and vo.lotId != ''">
+								, ANT4_LOT_ID = #{vo.lotId}
+							</if>
+							<choose>
+								<when test="vo.eventStatus == 'START'">
+									, ANT4_START_TIME = SYSTIMESTAMP
+								</when>
+								<when test="vo.eventStatus == 'END'">
+									, ANT4_END_TIME = SYSTIMESTAMP
+								</when>
+							</choose>
+						</when>
+						<when test="vo.eventStatus == 'LOT_START' or vo.eventStatus == 'LOT_END'">
+							<if test="processName != 'PLASMA'">
+								, ANT4_LOT_ID = #{vo.mesLotId4}
+								, ANT4_STATUS = #{vo.eventStatus}
+							</if>
+						</when>
+					</choose>
+				</if>
+				<if test="processName == 'PLASMA'">
+					<if test="vo.eventStatus == 'LOT_START' or vo.eventStatus == 'LOT_END'">
+						, ANT2_LOT_ID = #{vo.mesLotId2}
+						, ANT2_STATUS = #{vo.eventStatus}
+						, ANT4_LOT_ID = #{vo.mesLotId4}
+						, ANT4_STATUS = #{vo.eventStatus}
+					</if>
+				</if>
+			</when>
+		</choose>
+		WHERE
+			RD_MAC = #{readerMac}
+	</update>
+<!--
+	<update id="setCh4ReaderStatus" parameterType="map">
+		UPDATE
+			RFID2_RD_STATUS_TM
+		SET
+		<choose>
+			<when test="vo.ant == 1">
+				ANT1_TAG_UID = #{vo.tagUid}
+			  , ANT1_MAGAZINE_ID = #{vo.data}
+              , ANT1_MSG = #{mesMessage}
+				<choose>
+					<when test = "vo.eventStatus == 'START'">
+						<if test="vo.lotId != null and vo.lotId != ''">
+						  , ANT1_LOT_ID = #{vo.lotId}
+						</if>
+					</when>
+				</choose>
+                <if test="vo.eventStatus != 'LOT_START' and vo.eventStatus != 'LOT_END' and vo.eventStatus != 'LOT_END_NO_RESPONSE'">
+                    , ANT1_STATUS = #{vo.eventStatus}
+                </if>
+                <choose>
+                    <when test="vo.eventStatus == 'START' or vo.eventStatus == 'SEND_MES_START' or vo.eventStatus == 'LOT_START'">
+                        , ANT1_START_TIME = SYSTIMESTAMP
+                    </when>
+                    <when test="vo.eventStatus == 'END' or vo.eventStatus == 'SEND_MES_END' or vo.eventStatus == 'LOT_END'">
+                        , ANT1_END_TIME = SYSTIMESTAMP
+                    </when>
+                </choose>
+			</when>
+			<when test="vo.ant == 2">
+				ANT2_TAG_UID = #{vo.tagUid}
+			  , ANT2_MAGAZINE_ID = #{vo.data}
+              , ANT2_MSG = #{mesMessage}
+				<choose>
+					<when test = "vo.eventStatus == 'START'">
+						<if test="vo.lotId != null and vo.lotId != ''">
+						  , ANT2_LOT_ID = #{vo.lotId}
+						</if>
+					</when>
+				</choose>
+                <if test="vo.eventStatus != 'LOT_START' and vo.eventStatus != 'LOT_END' and vo.eventStatus != 'LOT_END_NO_RESPONSE'">
+			      , ANT2_STATUS = #{vo.eventStatus}
+                </if>
+                <choose>
+                    <when test="vo.eventStatus == 'START' or vo.eventStatus == 'SEND_MES_START' or vo.eventStatus == 'LOT_START'">
+                        , ANT2_START_TIME = SYSTIMESTAMP
+                    </when>
+                    <when test="vo.eventStatus == 'END' or vo.eventStatus == 'SEND_MES_END' or vo.eventStatus == 'LOT_END'">
+                        , ANT2_END_TIME = SYSTIMESTAMP
+                    </when>
+                </choose>
+			</when>
+			<when test="vo.ant == 3">
+				ANT3_TAG_UID = #{vo.tagUid}
+			  , ANT3_MAGAZINE_ID = #{vo.data}
+              , ANT3_MSG = #{mesMessage}
+				<choose>
+					<when test = "vo.eventStatus == 'START'">
+						<if test="vo.lotId != null and vo.lotId != ''">
+						, ANT3_LOT_ID = #{vo.lotId}
+						</if>
+					</when>
+				</choose>
+                <if test="vo.eventStatus != 'LOT_START' and vo.eventStatus != 'LOT_END' and vo.eventStatus != 'LOT_END_NO_RESPONSE'">
+                    , ANT3_STATUS = #{vo.eventStatus}
+                </if>
+                <choose>
+                    <when test="vo.eventStatus == 'START' or vo.eventStatus == 'SEND_MES_START' or vo.eventStatus == 'LOT_START'">
+                        , ANT3_START_TIME = SYSTIMESTAMP
+                    </when>
+                    <when test="vo.eventStatus == 'END' or vo.eventStatus == 'SEND_MES_END' or vo.eventStatus == 'LOT_END'">
+                        , ANT3_END_TIME = SYSTIMESTAMP
+                    </when>
+                </choose>
+			</when>
+			<when test="vo.ant == 4">
+				ANT4_TAG_UID = #{vo.tagUid}
+			  , ANT4_MAGAZINE_ID = #{vo.data}
+              , ANT4_MSG = #{mesMessage}
+				<choose>
+					<when test = "vo.eventStatus == 'START'">
+						<if test="vo.lotId != null and vo.lotId != ''">
+						, ANT4_LOT_ID = #{vo.lotId}
+						</if>
+					</when>
+				</choose>
+                <if test="vo.eventStatus != 'LOT_START' and vo.eventStatus != 'LOT_END' and vo.eventStatus != 'LOT_END_NO_RESPONSE'">
+                    , ANT4_STATUS = #{vo.eventStatus}
+                </if>
+                <choose>
+                    <when test="vo.eventStatus == 'START' or vo.eventStatus == 'SEND_MES_START' or vo.eventStatus == 'LOT_START'">
+                        , ANT4_START_TIME = SYSTIMESTAMP
+                    </when>
+                    <when test="vo.eventStatus == 'END' or vo.eventStatus == 'SEND_MES_END' or vo.eventStatus == 'LOT_END'">
+                        , ANT4_END_TIME = SYSTIMESTAMP
+                    </when>
+                </choose>
+			</when>
+		</choose>
+        <if test="vo.eventStatus == 'LOT_START' or vo.eventStatus == 'LOT_END'">
+            <choose>
+                <when test="vo.ant == 1 or vo.ant == 3">
+					, ANT1_LOT_ID = #{vo.mesLotId1}
+					, ANT1_STATUS = #{vo.eventStatus}
+					, ANT3_LOT_ID = #{vo.mesLotId3}
+                    , ANT3_STATUS = #{vo.eventStatus}
+                </when>
+                <otherwise>
+					, ANT2_LOT_ID = #{vo.mesLotId2}
+                    , ANT2_STATUS = #{vo.eventStatus}
+					, ANT4_LOT_ID = #{vo.mesLotId4}
+					, ANT4_STATUS = #{vo.eventStatus}
+				</otherwise>
+            </choose>
+        </if>
+		WHERE
+			RD_MAC = #{readerMac}
+	</update>
+-->
+	<update id="setMesUseYn" parameterType="String">
+		UPDATE
+			RFID2_RD_STATUS_TM
+		SET
+			MES_USE_YN = 'Y'
+		WHERE
+			RD_MAC = #{readerMac}
+	</update>
+
+	<!-- 리더의 현재 연결 상태 업데이트(Y,N)  -->
+	<update id="setReaderConnectStatus" parameterType="String">
+		UPDATE
+			RFID2_RD_STATUS_TM
+		SET
+			CONNECT_STATUS = #{flag}
+		WHERE
+			RD_MAC = #{readerMac}
+	</update>
+
+	<!-- 리더의 네트워크 정보 변경  -->
+	<update id="setReaderNetwork" parameterType="String">
+		UPDATE
+			RFID2_RD_INFO_TM
+		SET
+			RD_IP = #{changeIp}
+		  , RD_GATEWAY = #{gateway}
+		WHERE
+			RD_MAC = #{readerMac}
+	</update>
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- 태그 검증 시 사용 했던 쿼리 -->
+	<!--	<insert id="tagHistory" parameterType="TagWriteVO">
+		INSERT INTO RFID2_TAG_HISTORY (RD_MAC, CHANNEL, WRITE_DATA, RD_IP, REG_DATE)VALUES
+			(
+				#{readerMac}
+			  , #{channel}
+			  , #{writeData}
+			  , #{readerIp}
+			  , systimestamp
+			)
+	</insert>
+
+	<insert id="tagReadHistory" parameterType="TagWriteVO">
+		INSERT INTO RFID2_TAG_HISTORY (RD_MAC, CHANNEL, READ_DATA, RD_IP, REG_DATE)VALUES
+			(
+				#{readerMac}
+			  , #{channel}
+			  , #{readData}
+			  , #{readerIp}
+			  , systimestamp
+			)
+	</insert>
+
+	<insert id="tagUidHistory" parameterType="TagWriteVO">
+		INSERT INTO RFID2_TAG_HISTORY (RD_MAC, CHANNEL, TAG_UID, RD_IP, REG_DATE)VALUES
+			(
+				#{readerMac}
+			  , #{channel}
+			  , #{tagUid}
+			  , #{readerIp}
+			  , systimestamp
+			)
+	</insert>-->
+
+</mapper>

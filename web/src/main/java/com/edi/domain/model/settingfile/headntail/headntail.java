@@ -15,7 +15,7 @@ import com.edi.domain.common.model.AbstractBaseEntity;
 import com.edi.domain.model.user.UserId;
 
 @Entity
-@Table(name = "headntail")
+@Table(name = "EDI_FILE_HEADNTAIL")
 public class headntail extends AbstractBaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EDI_HNT_SEQUENCE")

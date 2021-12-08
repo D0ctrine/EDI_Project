@@ -10,6 +10,7 @@ import com.edi.domain.application.commands.config.query.CreateQueryCommand;
 import com.edi.domain.application.commands.config.query.UpdateQueryCommand;
 import com.edi.domain.model.commonfile.query.QueryRepository;
 import com.edi.domain.model.commonfile.query.QuerySetting;
+import com.edi.domain.model.user.UserId;
 
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,20 @@ public class QueryServiceImpl implements QueryService{
       querySettingList.add(qSetting);
     }
     return querySettingList;
+  }
+
+  @Override
+  public Boolean createCopy(List<QuerySetting> qc, UserId userid, String configId) {
+    try {
+      for(int i=0; i<qc.size(); i++){
+        QuerySetting qSetting = QuerySetting.create(userid, configId, qc.get(i).getKey(), qc.get(i).getType(), qc.get(i).getQuery(), qc.get(i).getDbtype());
+        queryRepository.save(qSetting);
+      }
+      return true;
+    } catch (Exception e) {
+      new Error(e.getMessage());
+    }
+    return false;
   }
 
   @Override
@@ -64,6 +79,13 @@ public class QueryServiceImpl implements QueryService{
   @Override
   public QuerySetting createMainQuery(CreateQueryCommand qc) {
     QuerySetting qSetting = QuerySetting.create(qc.getUserId(), qc.getSettingId(), qc.getKey(), qc.getType(), qc.getQuery(), qc.getDb_type());
+    queryRepository.save(qSetting);
+    return qSetting;
+  }
+
+  @Override
+  public QuerySetting copyMainQuery(UserId userid, String settingId, String key, String type, String query, String dbType) {
+    QuerySetting qSetting = QuerySetting.create(userid, settingId, key, type, query, dbType);
     queryRepository.save(qSetting);
     return qSetting;
   }

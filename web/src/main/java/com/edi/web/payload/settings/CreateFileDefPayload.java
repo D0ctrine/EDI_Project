@@ -7,6 +7,7 @@ public class CreateFileDefPayload {
   private String cfgId;
   private String fileName;
   private String fileDesc;
+  private String fileSaveFolder;
   private String fileCharset;
   private String dataType;
   private String fileType;
@@ -20,7 +21,7 @@ public class CreateFileDefPayload {
   private String sendFlag;
 
   public CreateFileDefCommand toCommand(UserId userId) {
-    return new CreateFileDefCommand(userId, cfgId, fileName, fileDesc, fileCharset, dataType, fileType, ftpEnvid, schMin, schHour, schDay, schWeek, schMonth, noDataSend, sendFlag);
+    return new CreateFileDefCommand(userId, cfgId, fileName, fileDesc, fileSaveFolder, fileCharset, dataType, fileType, ftpEnvid, schMin, schHour, schDay, schWeek, schMonth, noDataSend, sendFlag);
   }
 
   public void setCfgId(String cfgId) {
@@ -77,6 +78,10 @@ public class CreateFileDefPayload {
 
   public void setSendFlag(String sendFlag) {
     this.sendFlag = sendFlag;
+  }
+
+  public void setFileSaveFolder(String fileSaveFolder) {
+    this.fileSaveFolder = fileSaveFolder;
   }
 
 }

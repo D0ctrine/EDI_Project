@@ -43,12 +43,13 @@ public class HibernateFileDefRepository extends HibernateSupport<file_define> im
 
   @Override
   public file_define updateFileDefData(file_define fdef) {
-      getSession().createQuery("UPDATE FROM file_define SET FILE_NAME=:fileName,FILE_DESC=:file_desc,FILE_CHARSET=:fileCharset,FILE_TYPE=:fileType,DATA_TYPE=:dataType"
+      getSession().createQuery("UPDATE FROM file_define SET FILE_NAME=:fileName,FILE_DESC=:file_desc,FILE_SAVE_FOLDER=:fileSaveFolder,FILE_CHARSET=:fileCharset,FILE_TYPE=:fileType,DATA_TYPE=:dataType"
                             +",FTP_ENV_ID=:ftpEnvId,SCHEDULE_MIN=:schMin,SCHEDULE_HOUR=:schHour,SCHEDULE_DAY=:schDay,SCHEDULE_WEEK=:schWeek,SCHEDULE_MONTH=:schMonth"
                             +",CM_F01=:cm_f01, CM_F02=:cm_f02, UPDATE_USER=:update_user, UPDATE_DATE=:update_date, NODATASEND=:noDataSend WHERE ID=:id")
                                .setParameter("id", fdef.getId())
                                .setParameter("fileName", fdef.getFileName())
                                .setParameter("file_desc", fdef.getFile_desc())
+                               .setParameter("fileSaveFolder", fdef.getFileSaveFolder())
                                .setParameter("fileCharset", fdef.getFileCharset())
                                .setParameter("fileType", fdef.getFileType())
                                .setParameter("dataType", fdef.getDataType())

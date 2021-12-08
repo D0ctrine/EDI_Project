@@ -8,6 +8,7 @@ public class UpdateFileDefCommand {
   private String cfgId;
   private String fileName;
   private String description;
+  private String fileSaveFolder;
   private String fileCharset;
   private String dataType;
   private String fileType;
@@ -19,13 +20,14 @@ public class UpdateFileDefCommand {
   private String schMonth;
   private String noDataSend;
 
-  public UpdateFileDefCommand(Long id,UserId userId, String cfgId, String fileName, String description, String fileCharset, String dataType
+  public UpdateFileDefCommand(Long id,UserId userId, String cfgId, String fileName, String description,String fileSaveFolder,String fileCharset, String dataType
   ,String fileType, String ftpEnvid, String schMin, String schHour, String schDay, String schWeek, String schMonth,String noDataSend){
     this.id = id;
     this.userid = userId;
     this.cfgId = cfgId;
     this.fileName = fileName;
     this.description = description;
+    this.fileSaveFolder = fileSaveFolder;
     this.fileCharset = fileCharset;
     this.dataType = dataType;
     this.fileType = fileType;
@@ -96,6 +98,10 @@ public class UpdateFileDefCommand {
 
   public String getNoDataSend() {
     return noDataSend;
+  }
+
+  public String getFileSaveFolder() {
+    return fileSaveFolder;
   }
 
 }

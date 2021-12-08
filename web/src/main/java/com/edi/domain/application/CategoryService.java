@@ -5,6 +5,7 @@ import java.util.List;
 import com.edi.domain.application.commands.category.CreateCategoryCommand;
 import com.edi.domain.application.commands.category.UpdateCategoryCommand;
 import com.edi.domain.model.category.Category;
+import com.edi.domain.model.user.UserId;
 
 public interface CategoryService {
   /**
@@ -32,4 +33,10 @@ public interface CategoryService {
    * 카테고리 갱신
    */
   Category update(UpdateCategoryCommand cg);
+
+  /**
+   * Get category
+   * @return : Category
+   */
+  Category copyOne(String categoryId,UserId userid);
 }

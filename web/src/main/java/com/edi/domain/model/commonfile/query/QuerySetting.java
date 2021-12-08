@@ -16,7 +16,7 @@ import com.edi.domain.common.model.AbstractBaseEntity;
 import com.edi.domain.model.user.UserId;
 
 @Entity
-@Table(name = "query_setting")
+@Table(name = "EDI_QUERY_SETTING")
 public class QuerySetting extends AbstractBaseEntity {
 
   @Id

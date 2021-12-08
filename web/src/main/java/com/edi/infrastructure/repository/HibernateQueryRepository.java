@@ -61,18 +61,18 @@ public class HibernateQueryRepository extends HibernateSupport<QuerySetting> imp
 
   @Override
   public QuerySetting getMainQueryData(String configId) {
-    Query<QuerySetting> query = getSession().createNativeQuery("SELECT * FROM QUERY_SETTING "
-      +"WHERE ID=(SELECT MAX(ID) FROM QUERY_SETTING WHERE TYPE='Main' AND SETTING_ID=:id)",QuerySetting.class)
+    Query<QuerySetting> query = getSession().createNativeQuery("SELECT * FROM EDI_QUERY_SETTING "
+      +"WHERE ID=(SELECT MAX(ID) FROM EDI_QUERY_SETTING WHERE TYPE='Main' AND SETTING_ID=:id)",QuerySetting.class)
                                           .setParameter("id", configId);
     return query.uniqueResult();
   }
 
   @Override
   public List<QuerySetting> getUniqQueryData(String configId,String exConfigId) {
-    Query<QuerySetting> query = getSession().createNativeQuery("SELECT * FROM QUERY_SETTING "
+    Query<QuerySetting> query = getSession().createNativeQuery("SELECT * FROM EDI_QUERY_SETTING "
       +"WHERE 1=1"
       +"AND TYPE IN ('DB','TEXT') AND SETTING_ID = :id "
-      +"AND KEY NOT IN (SELECT KEY FROM QUERY_SETTING WHERE SETTING_ID = :excfgid AND TYPE IN ('DB','TEXT'))",QuerySetting.class)
+      +"AND KEY NOT IN (SELECT KEY FROM EDI_QUERY_SETTING WHERE SETTING_ID = :excfgid AND TYPE IN ('DB','TEXT'))",QuerySetting.class)
                                           .setParameter("id", configId)
                                           .setParameter("excfgid", exConfigId);
 

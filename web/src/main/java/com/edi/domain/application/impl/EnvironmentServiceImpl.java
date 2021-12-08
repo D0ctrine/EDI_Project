@@ -10,6 +10,7 @@ import com.edi.domain.application.commands.config.environment.CreateEnvCommand;
 import com.edi.domain.application.commands.config.environment.UpdateEnvCommand;
 import com.edi.domain.model.commonfile.environment.EnvRepository;
 import com.edi.domain.model.commonfile.environment.EnvSetting;
+import com.edi.domain.model.user.UserId;
 
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,20 @@ public class EnvironmentServiceImpl implements EnvironmentService{
       envSettingList.add(eSetting);
     }
     return envSettingList;
+  }
+
+  @Override
+  public Boolean createCopy(List<EnvSetting> ec,UserId userid,String cfgId) {
+    try {
+      for(int i=0; i<ec.size(); i++){
+        EnvSetting eSetting = EnvSetting.create(userid, cfgId, ec.get(i).getItem(), ec.get(i).getValue(), ec.get(i).getNote(), ec.get(i).getSet_type());
+        envRepository.save(eSetting);
+      }
+      return true;
+    } catch (Exception e) {
+      new Error(e.getMessage());
+    }
+    return false;
   }
 
   @Override

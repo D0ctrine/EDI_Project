@@ -3,6 +3,7 @@ package com.edi.web.apis;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.edi.domain.application.CategoryService;
 import com.edi.domain.application.EnvironmentService;
 import com.edi.domain.application.FileDefService;
 import com.edi.domain.application.HeadnTailService;
@@ -17,6 +18,7 @@ import com.edi.domain.application.commands.setting.fileDefine.UpdateFileDefComma
 import com.edi.domain.application.commands.setting.headntail.CreateHnTCommand;
 import com.edi.domain.application.commands.setting.headntail.UpdateHnTCommand;
 import com.edi.domain.common.security.CurrentUser;
+import com.edi.domain.model.category.Category;
 import com.edi.domain.model.commonfile.environment.EnvSetting;
 import com.edi.domain.model.commonfile.query.QuerySetting;
 import com.edi.domain.model.settingfile.Setting.file_define;
@@ -50,13 +52,58 @@ public class SettingApiController {
   private FileDefService fileDefService;
   private HeadnTailService hntService;
   private SQLService sqlService;
+  private CategoryService catService;
 
-  public SettingApiController(EnvironmentService envService,QueryService queryService,FileDefService fileDefService,HeadnTailService hntService,SQLService sqlService) {
+  public SettingApiController(CategoryService categoryService,EnvironmentService envService,QueryService queryService,FileDefService fileDefService,HeadnTailService hntService,SQLService sqlService) {
+    this.catService = categoryService;
     this.envService = envService;
     this.queryService = queryService;
     this.fileDefService = fileDefService;
     this.hntService = hntService;
     this.sqlService = sqlService;
+  }
+
+  @GetMapping("/api/copySetting")
+  public ResponseEntity<ApiResult> copySetting(@RequestParam String categoryId,
+                                             @CurrentUser SimpleUser currentUser) {
+    ApiResult apiResult = ApiResult.blank();
+
+    // Copy Setting
+    file_define fileDefList = new file_define();
+    List<EnvSetting> envList = new ArrayList<>();
+    List<QuerySetting> itemList = new ArrayList<>();
+    List<headntail> HnTList = new ArrayList<>();
+
+    if(categoryId!=null) {
+      // Copy Category
+      Category cg = catService.copyOne(categoryId, currentUser.getUserId());
+      envList = envService.getList(categoryId);
+      itemList = queryService.getList(categoryId);
+      fileDefList = fileDefService.getList(categoryId);
+      HnTList = hntService.getList(categoryId);
+      QuerySetting query = queryService.getMainQuery(categoryId); // Copy SQL
+      categoryId = cg.getId().toString();
+      // File Definition
+      fileDefService.createCopy(currentUser.getUserId(), categoryId, fileDefList.getFileName(), fileDefList.getFile_desc(), fileDefList.getFileSaveFolder(), fileDefList.getFileCharset(), fileDefList.getDataType(), fileDefList.getFileType(), fileDefList.getFtpEnvId(), fileDefList.getScheduleMin(), fileDefList.getScheduleHour(), fileDefList.getScheduleDay(), fileDefList.getScheduleWeek(), fileDefList.getScheduleMonth(), fileDefList.getNoDataSend(), fileDefList.getSend_flag());
+
+      // Env Setting
+      if(envList.size()!=0) envService.createCopy(envList, currentUser.getUserId(), categoryId);
+
+      // Item Setting
+      if(itemList.size()!=0) queryService.createCopy(itemList, currentUser.getUserId(), categoryId);
+
+      // Head and Tail Settings
+      if(HnTList.size()!=0) hntService.createCopy(HnTList, currentUser.getUserId(), categoryId);
+
+
+      if (query!=null) queryService.copyMainQuery(currentUser.getUserId(), categoryId, query.getKey(), query.getType(), query.getQuery(), query.getDbtype());
+
+      apiResult.add("result", "Success");
+    } else {
+      apiResult.add("result", "Fail");
+    }
+
+    return Result.ok(apiResult);
   }
 
   @GetMapping("/api/setting")
@@ -234,7 +281,7 @@ public class SettingApiController {
       ApiResult apiResult = ApiResult.blank();
       QuerySetting query = queryService.getMainQuery(categoryId);
       if(query==null)apiResult.add("MainQuery", "");
-      else apiResult.add("MainQuery", queryService.getMainQuery(categoryId));
+      else apiResult.add("MainQuery", query);
 
       return Result.ok(apiResult);
   }

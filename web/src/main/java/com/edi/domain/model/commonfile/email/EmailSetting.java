@@ -15,7 +15,7 @@ import com.edi.domain.common.model.AbstractBaseEntity;
 import com.edi.domain.model.user.UserId;
 
 @Entity
-@Table(name = "email_setting")
+@Table(name = "EDI_EMAIL_SETTING")
 public class EmailSetting extends AbstractBaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "EDI_EMAIL_SEQUENCE")
